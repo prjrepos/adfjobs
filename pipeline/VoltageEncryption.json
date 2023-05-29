@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "CopyCsvToJsonInCosmos",
+				"name": "CopyCsvToJsonIntoCosmos",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
