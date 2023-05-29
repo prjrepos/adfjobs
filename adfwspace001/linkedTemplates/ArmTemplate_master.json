@@ -7,17 +7,25 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "adfwspace001"
 		},
-		"cosmosdb_azurepoc_linked_service_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'cosmosdb_azurepoc_linked_service'"
-		},
 		"adls2_coredatapoc_linked_service_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'adls2_coredatapoc_linked_service'"
 		},
+		"cosmosdb_azurepoc_linked_service_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'cosmosdb_azurepoc_linked_service'"
+		},
+		"adls2_ samplepoc2022_linked_service_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://samplepoc2022.dfs.core.windows.net/"
+		},
 		"adls2_coredatapoc_linked_service_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://coredatapoc.dfs.core.windows.net/"
+		},
+		"adls2_synapsedatastore0001_linked_service_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://synapsedatastore0001.dfs.core.windows.net/"
 		},
 		"containerUri": {
 			"type": "string",
@@ -46,14 +54,20 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"cosmosdb_azurepoc_linked_service_connectionString": {
-						"value": "[parameters('cosmosdb_azurepoc_linked_service_connectionString')]"
-					},
 					"adls2_coredatapoc_linked_service_accountKey": {
 						"value": "[parameters('adls2_coredatapoc_linked_service_accountKey')]"
 					},
+					"cosmosdb_azurepoc_linked_service_connectionString": {
+						"value": "[parameters('cosmosdb_azurepoc_linked_service_connectionString')]"
+					},
+					"adls2_ samplepoc2022_linked_service_properties_typeProperties_url": {
+						"value": "[parameters('adls2_ samplepoc2022_linked_service_properties_typeProperties_url')]"
+					},
 					"adls2_coredatapoc_linked_service_properties_typeProperties_url": {
 						"value": "[parameters('adls2_coredatapoc_linked_service_properties_typeProperties_url')]"
+					},
+					"adls2_synapsedatastore0001_linked_service_properties_typeProperties_url": {
+						"value": "[parameters('adls2_synapsedatastore0001_linked_service_properties_typeProperties_url')]"
 					}
 				}
 			},

@@ -5,14 +5,20 @@
 		"factoryName": {
 			"value": "adfwspace001"
 		},
-		"cosmosdb_azurepoc_linked_service_connectionString": {
-			"value": ""
-		},
 		"adls2_coredatapoc_linked_service_accountKey": {
 			"value": ""
 		},
+		"cosmosdb_azurepoc_linked_service_connectionString": {
+			"value": ""
+		},
+		"adls2_ samplepoc2022_linked_service_properties_typeProperties_url": {
+			"value": "https://samplepoc2022.dfs.core.windows.net/"
+		},
 		"adls2_coredatapoc_linked_service_properties_typeProperties_url": {
 			"value": "https://coredatapoc.dfs.core.windows.net/"
+		},
+		"adls2_synapsedatastore0001_linked_service_properties_typeProperties_url": {
+			"value": "https://synapsedatastore0001.dfs.core.windows.net/"
 		}
 	}
 }
