@@ -1,0 +1,10 @@
+{
+	"name": "adls2_ samplepoc2022_linked_service",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://samplepoc2022.dfs.core.windows.net/"
+		}
+	}
+}
