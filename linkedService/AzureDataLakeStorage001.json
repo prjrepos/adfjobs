@@ -1,0 +1,10 @@
+{
+	"name": "AzureDataLakeStorage001",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://coredatapoc.dfs.core.windows.net/"
+		}
+	}
+}
