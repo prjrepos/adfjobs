@@ -5,7 +5,13 @@
 		"factoryName": {
 			"value": "adfwspace001"
 		},
-		"AzureDataLakeStorage001_properties_typeProperties_url": {
+		"cosmosdb_azurepoc_linked_service_connectionString": {
+			"value": ""
+		},
+		"adls2_coredatapoc_linked_service_accountKey": {
+			"value": ""
+		},
+		"adls2_coredatapoc_linked_service_properties_typeProperties_url": {
 			"value": "https://coredatapoc.dfs.core.windows.net/"
 		},
 		"containerUri": {

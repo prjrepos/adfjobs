@@ -7,7 +7,15 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "adfwspace001"
 		},
-		"AzureDataLakeStorage001_properties_typeProperties_url": {
+		"cosmosdb_azurepoc_linked_service_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'cosmosdb_azurepoc_linked_service'"
+		},
+		"adls2_coredatapoc_linked_service_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'adls2_coredatapoc_linked_service'"
+		},
+		"adls2_coredatapoc_linked_service_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://coredatapoc.dfs.core.windows.net/"
 		}
@@ -17,14 +25,31 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage001')]",
+			"name": "[concat(parameters('factoryName'), '/cosmosdb_azurepoc_linked_service')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "CosmosDb",
+				"typeProperties": {
+					"connectionString": "[parameters('cosmosdb_azurepoc_linked_service_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/adls2_coredatapoc_linked_service')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
 				"type": "AzureBlobFS",
 				"typeProperties": {
-					"url": "[parameters('AzureDataLakeStorage001_properties_typeProperties_url')]"
+					"url": "[parameters('adls2_coredatapoc_linked_service_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('adls2_coredatapoc_linked_service_accountKey')]"
+					}
 				}
 			},
 			"dependsOn": []
