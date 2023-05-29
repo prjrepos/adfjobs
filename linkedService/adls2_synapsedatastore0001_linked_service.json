@@ -1,0 +1,10 @@
+{
+	"name": "adls2_synapsedatastore0001_linked_service",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://synapsedatastore0001.dfs.core.windows.net/"
+		}
+	}
+}
