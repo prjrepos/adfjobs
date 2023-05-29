@@ -1,0 +1,9 @@
+{
+	"name": "adfwspace001",
+	"location": "uksouth",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "7462065b-6dbe-4e68-91f2-3e926f83c883",
+		"tenantId": "11a875fd-3eec-4e33-b2df-b38fa4feb72e"
+	}
+}
