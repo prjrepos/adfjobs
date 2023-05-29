@@ -13,7 +13,15 @@
 					"name": "EncryptedCsvInput"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "CosmosDbNoSqlContainer1",
+						"type": "DatasetReference"
+					},
+					"name": "CosmosdbOutput"
+				}
+			],
 			"transformations": [],
 			"scriptLines": [
 				"source(output(",
@@ -24,7 +32,33 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> EncryptedCsvInput"
+				"     ignoreNoFilesFound: false) ~> EncryptedCsvInput",
+				"EncryptedCsvInput sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          eventType as string,",
+				"          eventTime as string,",
+				"          topic as string,",
+				"          subject as string,",
+				"          profile as (firstname as string, lastname as string, contact as string),",
+				"          dataVersion as string,",
+				"          metadataVersion as string,",
+				"          data as (validationCode as string, validationUrl as string)",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'document',",
+				"     partitionKey: ['city'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          NAME,",
+				"          AGE,",
+				"          DOB,",
+				"          CITY",
+				"     )) ~> CosmosdbOutput"
 			]
 		}
 	}

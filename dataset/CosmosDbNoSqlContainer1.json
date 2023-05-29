@@ -1,0 +1,62 @@
+{
+	"name": "CosmosDbNoSqlContainer1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "cosmosdb_azurepoc_linked_service",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "CosmosDbSqlApiCollection",
+		"schema": {
+			"type": "object",
+			"properties": {
+				"eventType": {
+					"type": "string"
+				},
+				"eventTime": {
+					"type": "string"
+				},
+				"topic": {
+					"type": "string"
+				},
+				"subject": {
+					"type": "string"
+				},
+				"profile": {
+					"type": "object",
+					"properties": {
+						"firstname": {
+							"type": "string"
+						},
+						"lastname": {
+							"type": "string"
+						},
+						"contact": {
+							"type": "string"
+						}
+					}
+				},
+				"dataVersion": {
+					"type": "string"
+				},
+				"metadataVersion": {
+					"type": "string"
+				},
+				"data": {
+					"type": "object",
+					"properties": {
+						"validationCode": {
+							"type": "string"
+						},
+						"validationUrl": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		},
+		"typeProperties": {
+			"collectionName": "customer_demographic"
+		}
+	}
+}
