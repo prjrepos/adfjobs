@@ -1,5 +1,5 @@
 {
-	"name": "ImportEncryptedData",
+	"name": "ImportEncryptedDataToCosmosDb",
 	"properties": {
 		"description": "Import Encrypted Data to Cosmos",
 		"type": "MappingDataFlow",
