@@ -1,0 +1,31 @@
+{
+	"name": "ImportEncryptedData",
+	"properties": {
+		"description": "Import Encrypted Data to Cosmos",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "VoltageEncryptedCsvData",
+						"type": "DatasetReference"
+					},
+					"name": "EncryptedCsvInput"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          NAME as string,",
+				"          AGE as string,",
+				"          DOB as string,",
+				"          CITY as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> EncryptedCsvInput"
+			]
+		}
+	}
+}
