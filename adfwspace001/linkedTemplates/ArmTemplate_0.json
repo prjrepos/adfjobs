@@ -201,85 +201,14 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ImportEncryptedDataToCosmosDb')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Import Encrypted Data to Cosmos",
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "VoltageEncryptedCsvData",
-								"type": "DatasetReference"
-							},
-							"name": "EncryptedCsvInput"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "CosmosDbNoSqlContainer",
-								"type": "DatasetReference"
-							},
-							"name": "CosmosdbOutput"
-						}
-					],
-					"transformations": [],
-					"scriptLines": [
-						"source(output(",
-						"          NAME as string,",
-						"          AGE as string,",
-						"          DOB as string,",
-						"          CITY as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> EncryptedCsvInput",
-						"EncryptedCsvInput sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     input(",
-						"          eventType as string,",
-						"          eventTime as string,",
-						"          topic as string,",
-						"          subject as string,",
-						"          profile as (firstname as string, lastname as string, contact as string),",
-						"          dataVersion as string,",
-						"          metadataVersion as string,",
-						"          data as (validationCode as string, validationUrl as string)",
-						"     ),",
-						"     deletable:false,",
-						"     insertable:true,",
-						"     updateable:false,",
-						"     upsertable:false,",
-						"     format: 'document',",
-						"     partitionKey: ['city'],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     mapColumn(",
-						"          NAME,",
-						"          AGE,",
-						"          DOB,",
-						"          CITY",
-						"     )) ~> CosmosdbOutput"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/VoltageEncryptedCsvData')]",
-				"[concat(variables('factoryId'), '/datasets/CosmosDbNoSqlContainer')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/VoltageEncryption')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "ImportEncryptedDataToCosmosDb",
-						"type": "ExecuteDataFlow",
+						"name": "CopyCsvToJsonIntoCosmos",
+						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
@@ -290,22 +219,80 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"dataflow": {
-								"referenceName": "ImportEncryptedDataToCosmosDb",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"EncryptedCsvInput": {},
-									"CosmosdbOutput": {}
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "azbatch-voltage-data/encrypted_import",
+									"wildcardFileName": "*.csv",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
 								}
 							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
+							"sink": {
+								"type": "CosmosDbSqlApiSink",
+								"writeBehavior": "insert"
 							},
-							"traceLevel": "Fine"
-						}
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "NAME",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$name"
+										}
+									},
+									{
+										"source": {
+											"name": "AGE",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$age"
+										}
+									},
+									{
+										"source": {
+											"name": "DOB",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$dob"
+										}
+									},
+									{
+										"source": {
+											"name": "CITY",
+											"type": "String"
+										},
+										"sink": {
+											"path": "$city"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "VoltageEncryptedCsvData",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CosmosDbNoSqlContainer",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
 					}
 				],
 				"policy": {
@@ -315,7 +302,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/ImportEncryptedDataToCosmosDb')]"
+				"[concat(variables('factoryId'), '/datasets/VoltageEncryptedCsvData')]",
+				"[concat(variables('factoryId'), '/datasets/CosmosDbNoSqlContainer')]"
 			]
 		}
 	]
