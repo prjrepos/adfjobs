@@ -82,7 +82,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"filename": {
-								"value": "@concat('db_export_', utcnow())",
+								"value": "@concat('db_export_', utcnow(), '.csv')",
 								"type": "Expression"
 							}
 						}
