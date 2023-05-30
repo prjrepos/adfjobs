@@ -1,0 +1,40 @@
+{
+	"name": "VoltageEncryptedCsvDbExport",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "adls2_ samplepoc2022_linked_service",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"filename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "azbatch-voltage-data/encrypted_import",
+				"fileSystem": "azure-batch-storage"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			},
+			{
+				"type": "String"
+			}
+		]
+	}
+}
