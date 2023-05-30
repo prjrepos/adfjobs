@@ -39,8 +39,7 @@
 									"path": "$['$name']"
 								},
 								"sink": {
-									"type": "String",
-									"ordinal": 1
+									"name": "NAME"
 								}
 							},
 							{
@@ -48,8 +47,7 @@
 									"path": "$['$age']"
 								},
 								"sink": {
-									"type": "String",
-									"ordinal": 2
+									"name": "AGE"
 								}
 							},
 							{
@@ -57,8 +55,7 @@
 									"path": "$['$dob']"
 								},
 								"sink": {
-									"type": "String",
-									"ordinal": 3
+									"name": "DOB"
 								}
 							},
 							{
@@ -66,8 +63,7 @@
 									"path": "$['$city']"
 								},
 								"sink": {
-									"type": "String",
-									"ordinal": 4
+									"name": "CITY"
 								}
 							}
 						],
