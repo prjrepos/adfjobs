@@ -29,15 +29,19 @@
 		},
 		"schema": [
 			{
+				"name": "NAME",
 				"type": "String"
 			},
 			{
+				"name": "AGE",
 				"type": "String"
 			},
 			{
+				"name": "DOB",
 				"type": "String"
 			},
 			{
+				"name": "CITY",
 				"type": "String"
 			}
 		]
