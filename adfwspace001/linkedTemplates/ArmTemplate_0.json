@@ -15,6 +15,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'cosmosdb_azurepoc_linked_service'"
 		},
+		"azurebatch_storage_linked_service_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'azurebatch_storage_linked_service'"
+		},
+		"azurebatch_linked_service_accessKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessKey' of 'azurebatch_linked_service'"
+		},
 		"adls2_ samplepoc2022_linked_service_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://samplepoc2022.dfs.core.windows.net/"
@@ -26,6 +34,18 @@
 		"adls2_synapsedatastore0001_linked_service_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://synapsedatastore0001.dfs.core.windows.net/"
+		},
+		"azurebatch_linked_service_properties_typeProperties_batchUri": {
+			"type": "string",
+			"defaultValue": "https://azurebatchservice.uksouth.batch.azure.com"
+		},
+		"azurebatch_linked_service_properties_typeProperties_poolName": {
+			"type": "string",
+			"defaultValue": "launchpad-pool-01"
+		},
+		"azurebatch_linked_service_properties_typeProperties_accountName": {
+			"type": "string",
+			"defaultValue": "azurebatchservice"
 		}
 	},
 	"variables": {
@@ -89,49 +109,17 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/VoltageEncryptedCsvData')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/azurebatch_storage_linked_service')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "adls2_ samplepoc2022_linked_service",
-					"type": "LinkedServiceReference"
-				},
 				"annotations": [],
-				"type": "DelimitedText",
+				"type": "AzureBlobStorage",
 				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "azbatch-voltage-data/encrypted_import",
-						"fileSystem": "azure-batch-storage"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "NAME",
-						"type": "String"
-					},
-					{
-						"name": "AGE",
-						"type": "String"
-					},
-					{
-						"name": "DOB",
-						"type": "String"
-					},
-					{
-						"name": "CITY",
-						"type": "String"
-					}
-				]
+					"connectionString": "[parameters('azurebatch_storage_linked_service_connectionString')]"
+				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/adls2_ samplepoc2022_linked_service')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/CosmosDbNoSqlContainer')]",
@@ -198,6 +186,76 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/cosmosdb_azurepoc_linked_service')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/VoltageEncryptedCsvData')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "adls2_ samplepoc2022_linked_service",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "azbatch-voltage-data/encrypted_import",
+						"fileSystem": "azure-batch-storage"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "NAME",
+						"type": "String"
+					},
+					{
+						"name": "AGE",
+						"type": "String"
+					},
+					{
+						"name": "DOB",
+						"type": "String"
+					},
+					{
+						"name": "CITY",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/adls2_ samplepoc2022_linked_service')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/azurebatch_linked_service')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBatch",
+				"typeProperties": {
+					"batchUri": "[parameters('azurebatch_linked_service_properties_typeProperties_batchUri')]",
+					"poolName": "[parameters('azurebatch_linked_service_properties_typeProperties_poolName')]",
+					"accountName": "[parameters('azurebatch_linked_service_properties_typeProperties_accountName')]",
+					"linkedServiceName": {
+						"referenceName": "azurebatch_storage_linked_service",
+						"type": "LinkedServiceReference"
+					},
+					"accessKey": {
+						"type": "SecureString",
+						"value": "[parameters('azurebatch_linked_service_accessKey')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/azurebatch_storage_linked_service')]"
 			]
 		},
 		{

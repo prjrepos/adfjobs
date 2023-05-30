@@ -11,6 +11,12 @@
 		"cosmosdb_azurepoc_linked_service_connectionString": {
 			"value": ""
 		},
+		"azurebatch_storage_linked_service_connectionString": {
+			"value": ""
+		},
+		"azurebatch_linked_service_accessKey": {
+			"value": ""
+		},
 		"adls2_ samplepoc2022_linked_service_properties_typeProperties_url": {
 			"value": "https://samplepoc2022.dfs.core.windows.net/"
 		},
@@ -19,6 +25,15 @@
 		},
 		"adls2_synapsedatastore0001_linked_service_properties_typeProperties_url": {
 			"value": "https://synapsedatastore0001.dfs.core.windows.net/"
+		},
+		"azurebatch_linked_service_properties_typeProperties_batchUri": {
+			"value": "https://azurebatchservice.uksouth.batch.azure.com"
+		},
+		"azurebatch_linked_service_properties_typeProperties_poolName": {
+			"value": "launchpad-pool-01"
+		},
+		"azurebatch_linked_service_properties_typeProperties_accountName": {
+			"value": "azurebatchservice"
 		}
 	}
 }
