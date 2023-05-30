@@ -363,6 +363,166 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/azurebatch_storage_linked_service')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/VoltageDecryption')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ExportDataFromCosmosToCsv",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "CosmosDbSqlApiSource",
+								"preferredRegions": []
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['$name']"
+										},
+										"sink": {
+											"name": "NAME"
+										}
+									},
+									{
+										"source": {
+											"path": "$['$age']"
+										},
+										"sink": {
+											"name": "AGE"
+										}
+									},
+									{
+										"source": {
+											"path": "$['$dob']"
+										},
+										"sink": {
+											"name": "DOB"
+										}
+									},
+									{
+										"source": {
+											"path": "$['$city']"
+										},
+										"sink": {
+											"name": "CITY"
+										}
+									}
+								],
+								"collectionReference": ""
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "CosmosDbNoSqlContainer",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "VoltageEncryptedCsvDbExport",
+								"type": "DatasetReference",
+								"parameters": {
+									"filename": {
+										"value": "@concat('db_export_', utcnow(), '.csv')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/CosmosDbNoSqlContainer')]",
+				"[concat(variables('factoryId'), '/datasets/VoltageEncryptedCsvDbExport')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/VoltageEncryptedCsvDbExport')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "adls2_ samplepoc2022_linked_service",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().filename",
+							"type": "Expression"
+						},
+						"folderPath": "azbatch-voltage-data/encrypted_import",
+						"fileSystem": "azure-batch-storage"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": ""
+				},
+				"schema": [
+					{
+						"name": "NAME",
+						"type": "String"
+					},
+					{
+						"name": "AGE",
+						"type": "String"
+					},
+					{
+						"name": "DOB",
+						"type": "String"
+					},
+					{
+						"name": "CITY",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/adls2_ samplepoc2022_linked_service')]"
+			]
 		}
 	]
 }
