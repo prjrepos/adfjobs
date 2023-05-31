@@ -93,7 +93,14 @@
 				"name": "VoltageDecryptionService",
 				"description": "Voltage Decryption Service",
 				"type": "Custom",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "ExportDataFromCosmosToCsv",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
