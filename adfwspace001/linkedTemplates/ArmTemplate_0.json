@@ -578,7 +578,7 @@
 						}
 					},
 					{
-						"name": "DeleteEncryptedFilesPostProcessing",
+						"name": "DeleteCsvPostProcessing",
 						"description": "Delete Encrypted Files Post Processing",
 						"type": "Delete",
 						"dependsOn": [
