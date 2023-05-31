@@ -145,6 +145,13 @@
 						"referenceName": "VoltageEncryptedCsvData",
 						"type": "DatasetReference"
 					},
+					"logStorageSettings": {
+						"linkedServiceName": {
+							"referenceName": "adls2_coredatapoc_linked_service",
+							"type": "LinkedServiceReference"
+						},
+						"path": "data/adfmetadata"
+					},
 					"enableLogging": true,
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
