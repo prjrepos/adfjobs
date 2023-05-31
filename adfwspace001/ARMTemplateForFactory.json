@@ -11,17 +11,17 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'adls2_coredatapoc_linked_service'"
 		},
-		"cosmosdb_azurepoc_linked_service_connectionString": {
+		"azurebatch_linked_service_accessKey": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'cosmosdb_azurepoc_linked_service'"
+			"metadata": "Secure string for 'accessKey' of 'azurebatch_linked_service'"
 		},
 		"azurebatch_storage_linked_service_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'azurebatch_storage_linked_service'"
 		},
-		"azurebatch_linked_service_accessKey": {
+		"cosmosdb_azurepoc_linked_service_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'accessKey' of 'azurebatch_linked_service'"
+			"metadata": "Secure string for 'connectionString' of 'cosmosdb_azurepoc_linked_service'"
 		},
 		"adls2_ samplepoc2022_linked_service_properties_typeProperties_url": {
 			"type": "string",
@@ -53,6 +53,112 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/VoltageDecryption')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ExportDataFromCosmosToCsv",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "CosmosDbSqlApiSource",
+								"preferredRegions": []
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['$name']"
+										},
+										"sink": {
+											"name": "NAME"
+										}
+									},
+									{
+										"source": {
+											"path": "$['$age']"
+										},
+										"sink": {
+											"name": "AGE"
+										}
+									},
+									{
+										"source": {
+											"path": "$['$dob']"
+										},
+										"sink": {
+											"name": "DOB"
+										}
+									},
+									{
+										"source": {
+											"path": "$['$city']"
+										},
+										"sink": {
+											"name": "CITY"
+										}
+									}
+								],
+								"collectionReference": ""
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "CosmosDbNoSqlContainer",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "VoltageEncryptedCsvDbExport",
+								"type": "DatasetReference",
+								"parameters": {
+									"filename": {
+										"value": "@concat('db_export_', utcnow(), '.csv')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/CosmosDbNoSqlContainer')]",
+				"[concat(variables('factoryId'), '/datasets/VoltageEncryptedCsvDbExport')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/VoltageEncryption')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -61,7 +167,14 @@
 					{
 						"name": "CopyCsvToJsonIntoCosmos",
 						"type": "Copy",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "VoltageEncryptionService",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -145,6 +258,31 @@
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "VoltageEncryptionService",
+						"description": "Voltage Encryption Service hosted by Azure Batch",
+						"type": "Custom",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"command": "/bin/bash -c \"java -cp /mnt/batch/tasks/startup/wd/AzureBatchService-1.0.0-jar-with-dependencies.jar AzureBatchService /mnt/batch/tasks/startup/wd/batch_service_config_01.xml encrypt\"",
+							"referenceObjects": {
+								"linkedServices": [],
+								"datasets": []
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "azurebatch_linked_service",
+							"type": "LinkedServiceReference"
+						}
 					}
 				],
 				"policy": {
@@ -155,7 +293,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/VoltageEncryptedCsvData')]",
-				"[concat(variables('factoryId'), '/datasets/CosmosDbNoSqlContainer')]"
+				"[concat(variables('factoryId'), '/datasets/CosmosDbNoSqlContainer')]",
+				"[concat(variables('factoryId'), '/linkedServices/azurebatch_linked_service')]"
 			]
 		},
 		{
@@ -271,206 +410,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/adls2_ samplepoc2022_linked_service')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('adls2_ samplepoc2022_linked_service_properties_typeProperties_url')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/adls2_coredatapoc_linked_service')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('adls2_coredatapoc_linked_service_properties_typeProperties_url')]",
-					"accountKey": {
-						"type": "SecureString",
-						"value": "[parameters('adls2_coredatapoc_linked_service_accountKey')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/adls2_synapsedatastore0001_linked_service')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('adls2_synapsedatastore0001_linked_service_properties_typeProperties_url')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/cosmosdb_azurepoc_linked_service')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "CosmosDb",
-				"typeProperties": {
-					"connectionString": "[parameters('cosmosdb_azurepoc_linked_service_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/azurebatch_storage_linked_service')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('azurebatch_storage_linked_service_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/azurebatch_linked_service')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBatch",
-				"typeProperties": {
-					"batchUri": "[parameters('azurebatch_linked_service_properties_typeProperties_batchUri')]",
-					"poolName": "[parameters('azurebatch_linked_service_properties_typeProperties_poolName')]",
-					"accountName": "[parameters('azurebatch_linked_service_properties_typeProperties_accountName')]",
-					"linkedServiceName": {
-						"referenceName": "azurebatch_storage_linked_service",
-						"type": "LinkedServiceReference"
-					},
-					"accessKey": {
-						"type": "SecureString",
-						"value": "[parameters('azurebatch_linked_service_accessKey')]"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/azurebatch_storage_linked_service')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/VoltageDecryption')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "ExportDataFromCosmosToCsv",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "CosmosDbSqlApiSource",
-								"preferredRegions": []
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"path": "$['$name']"
-										},
-										"sink": {
-											"name": "NAME"
-										}
-									},
-									{
-										"source": {
-											"path": "$['$age']"
-										},
-										"sink": {
-											"name": "AGE"
-										}
-									},
-									{
-										"source": {
-											"path": "$['$dob']"
-										},
-										"sink": {
-											"name": "DOB"
-										}
-									},
-									{
-										"source": {
-											"path": "$['$city']"
-										},
-										"sink": {
-											"name": "CITY"
-										}
-									}
-								],
-								"collectionReference": ""
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "CosmosDbNoSqlContainer",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "VoltageEncryptedCsvDbExport",
-								"type": "DatasetReference",
-								"parameters": {
-									"filename": {
-										"value": "@concat('db_export_', utcnow(), '.csv')",
-										"type": "Expression"
-									}
-								}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CosmosDbNoSqlContainer')]",
-				"[concat(variables('factoryId'), '/datasets/VoltageEncryptedCsvDbExport')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/VoltageEncryptedCsvDbExport')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -523,6 +462,100 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/adls2_ samplepoc2022_linked_service')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/adls2_ samplepoc2022_linked_service')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('adls2_ samplepoc2022_linked_service_properties_typeProperties_url')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/adls2_coredatapoc_linked_service')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('adls2_coredatapoc_linked_service_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('adls2_coredatapoc_linked_service_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/adls2_synapsedatastore0001_linked_service')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('adls2_synapsedatastore0001_linked_service_properties_typeProperties_url')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/azurebatch_linked_service')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBatch",
+				"typeProperties": {
+					"batchUri": "[parameters('azurebatch_linked_service_properties_typeProperties_batchUri')]",
+					"poolName": "[parameters('azurebatch_linked_service_properties_typeProperties_poolName')]",
+					"accountName": "[parameters('azurebatch_linked_service_properties_typeProperties_accountName')]",
+					"linkedServiceName": {
+						"referenceName": "azurebatch_storage_linked_service",
+						"type": "LinkedServiceReference"
+					},
+					"accessKey": {
+						"type": "SecureString",
+						"value": "[parameters('azurebatch_linked_service_accessKey')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/azurebatch_storage_linked_service')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/azurebatch_storage_linked_service')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('azurebatch_storage_linked_service_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/cosmosdb_azurepoc_linked_service')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "CosmosDb",
+				"typeProperties": {
+					"connectionString": "[parameters('cosmosdb_azurepoc_linked_service_connectionString')]"
+				}
+			},
+			"dependsOn": []
 		}
 	]
 }

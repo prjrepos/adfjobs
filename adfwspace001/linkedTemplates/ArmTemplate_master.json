@@ -11,17 +11,17 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'adls2_coredatapoc_linked_service'"
 		},
-		"cosmosdb_azurepoc_linked_service_connectionString": {
+		"azurebatch_linked_service_accessKey": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'cosmosdb_azurepoc_linked_service'"
+			"metadata": "Secure string for 'accessKey' of 'azurebatch_linked_service'"
 		},
 		"azurebatch_storage_linked_service_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'azurebatch_storage_linked_service'"
 		},
-		"azurebatch_linked_service_accessKey": {
+		"cosmosdb_azurepoc_linked_service_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'accessKey' of 'azurebatch_linked_service'"
+			"metadata": "Secure string for 'connectionString' of 'cosmosdb_azurepoc_linked_service'"
 		},
 		"adls2_ samplepoc2022_linked_service_properties_typeProperties_url": {
 			"type": "string",
@@ -77,11 +77,11 @@
 					"adls2_coredatapoc_linked_service_accountKey": {
 						"value": "[parameters('adls2_coredatapoc_linked_service_accountKey')]"
 					},
-					"cosmosdb_azurepoc_linked_service_connectionString": {
-						"value": "[parameters('cosmosdb_azurepoc_linked_service_connectionString')]"
-					},
 					"azurebatch_storage_linked_service_connectionString": {
 						"value": "[parameters('azurebatch_storage_linked_service_connectionString')]"
+					},
+					"cosmosdb_azurepoc_linked_service_connectionString": {
+						"value": "[parameters('cosmosdb_azurepoc_linked_service_connectionString')]"
 					},
 					"azurebatch_linked_service_accessKey": {
 						"value": "[parameters('azurebatch_linked_service_accessKey')]"

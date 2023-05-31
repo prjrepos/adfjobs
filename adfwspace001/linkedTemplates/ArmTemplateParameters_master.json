@@ -8,13 +8,13 @@
 		"adls2_coredatapoc_linked_service_accountKey": {
 			"value": ""
 		},
-		"cosmosdb_azurepoc_linked_service_connectionString": {
+		"azurebatch_linked_service_accessKey": {
 			"value": ""
 		},
 		"azurebatch_storage_linked_service_connectionString": {
 			"value": ""
 		},
-		"azurebatch_linked_service_accessKey": {
+		"cosmosdb_azurepoc_linked_service_connectionString": {
 			"value": ""
 		},
 		"adls2_ samplepoc2022_linked_service_properties_typeProperties_url": {
