@@ -198,7 +198,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "CopyCsvToJsonIntoCosmos",
+						"name": "ImportCsvToCosmosDb",
 						"type": "Copy",
 						"dependsOn": [
 							{
@@ -323,7 +323,7 @@
 						"type": "Delete",
 						"dependsOn": [
 							{
-								"activity": "CopyCsvToJsonIntoCosmos",
+								"activity": "ImportCsvToCosmosDb",
 								"dependencyConditions": [
 									"Succeeded"
 								]
