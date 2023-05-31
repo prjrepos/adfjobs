@@ -119,6 +119,40 @@
 					"referenceName": "azurebatch_linked_service",
 					"type": "LinkedServiceReference"
 				}
+			},
+			{
+				"name": "DeleteEncryptedFilesPostProcessing",
+				"description": "Delete Encrypted Files Post Processing",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "CopyCsvToJsonIntoCosmos",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "VoltageEncryptedCsvData",
+						"type": "DatasetReference"
+					},
+					"enableLogging": true,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"wildcardFileName": "*.csv",
+						"enablePartitionDiscovery": false
+					}
+				}
 			}
 		],
 		"annotations": []
