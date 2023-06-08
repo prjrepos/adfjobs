@@ -58,5 +58,6 @@
 		"typeProperties": {
 			"collectionName": "customer_demographic"
 		}
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
 }

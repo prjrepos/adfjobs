@@ -1,5 +1,6 @@
 {
 	"name": "adls2_synapsedatastore0001_linked_service",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"annotations": [],
 		"type": "AzureBlobFS",

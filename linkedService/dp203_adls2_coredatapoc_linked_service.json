@@ -1,11 +1,11 @@
 {
-	"name": "adls2_ samplepoc2022_linked_service",
+	"name": "dp203_adls2_coredatapoc_linked_service",
 	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"annotations": [],
 		"type": "AzureBlobFS",
 		"typeProperties": {
-			"url": "https://samplepoc2022.dfs.core.windows.net/"
+			"url": "https://coredatapoc.dfs.core.windows.net/"
 		}
 	}
 }
