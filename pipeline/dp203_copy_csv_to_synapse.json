@@ -4,6 +4,7 @@
 		"activities": [
 			{
 				"name": "dp203_copy_to_logdata",
+				"description": "copy csv file from adls gen2 to synapse logdata table",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
