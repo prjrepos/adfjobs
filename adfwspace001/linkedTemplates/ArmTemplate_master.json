@@ -23,6 +23,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'cosmosdb_azurepoc_linked_service'"
 		},
+		"dp203_synapsedb001_linked_service_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'dp203_synapsedb001_linked_service'"
+		},
 		"adls2_ samplepoc2022_linked_service_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://samplepoc2022.dfs.core.windows.net/"
@@ -46,6 +50,10 @@
 		"azurebatch_linked_service_properties_typeProperties_accountName": {
 			"type": "string",
 			"defaultValue": "azurebatchservice"
+		},
+		"dp203_adls2_coredatapoc_linked_service_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://coredatapoc.dfs.core.windows.net/"
 		},
 		"containerUri": {
 			"type": "string",
@@ -83,6 +91,9 @@
 					"cosmosdb_azurepoc_linked_service_connectionString": {
 						"value": "[parameters('cosmosdb_azurepoc_linked_service_connectionString')]"
 					},
+					"dp203_synapsedb001_linked_service_connectionString": {
+						"value": "[parameters('dp203_synapsedb001_linked_service_connectionString')]"
+					},
 					"azurebatch_linked_service_accessKey": {
 						"value": "[parameters('azurebatch_linked_service_accessKey')]"
 					},
@@ -94,6 +105,9 @@
 					},
 					"adls2_synapsedatastore0001_linked_service_properties_typeProperties_url": {
 						"value": "[parameters('adls2_synapsedatastore0001_linked_service_properties_typeProperties_url')]"
+					},
+					"dp203_adls2_coredatapoc_linked_service_properties_typeProperties_url": {
+						"value": "[parameters('dp203_adls2_coredatapoc_linked_service_properties_typeProperties_url')]"
 					},
 					"azurebatch_linked_service_properties_typeProperties_batchUri": {
 						"value": "[parameters('azurebatch_linked_service_properties_typeProperties_batchUri')]"
