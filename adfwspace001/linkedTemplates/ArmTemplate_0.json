@@ -322,74 +322,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/dp203_synapsedb_logdata')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "dp203_synapsedb001_linked_service",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlDWTable",
-				"schema": [
-					{
-						"name": "Correlation id",
-						"type": "varchar"
-					},
-					{
-						"name": "Operation name",
-						"type": "varchar"
-					},
-					{
-						"name": "Status",
-						"type": "varchar"
-					},
-					{
-						"name": "Event category",
-						"type": "varchar"
-					},
-					{
-						"name": "Level",
-						"type": "varchar"
-					},
-					{
-						"name": "Time",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "Subscription",
-						"type": "varchar"
-					},
-					{
-						"name": "Event initiated by",
-						"type": "varchar"
-					},
-					{
-						"name": "Resource type",
-						"type": "varchar"
-					},
-					{
-						"name": "Resource group",
-						"type": "varchar"
-					},
-					{
-						"name": "Resource",
-						"type": "varchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "logdata"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/dp203_synapsedb001_linked_service')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/dp203_logdata_csv')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -489,28 +421,71 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/azurebatch_linked_service')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"name": "[concat(parameters('factoryName'), '/dp203_synapsedb_logdata')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dp203_synapsedb001_linked_service",
+					"type": "LinkedServiceReference"
+				},
 				"annotations": [],
-				"type": "AzureBatch",
-				"typeProperties": {
-					"batchUri": "[parameters('azurebatch_linked_service_properties_typeProperties_batchUri')]",
-					"poolName": "[parameters('azurebatch_linked_service_properties_typeProperties_poolName')]",
-					"accountName": "[parameters('azurebatch_linked_service_properties_typeProperties_accountName')]",
-					"linkedServiceName": {
-						"referenceName": "azurebatch_storage_linked_service",
-						"type": "LinkedServiceReference"
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "Correlation id",
+						"type": "varchar"
 					},
-					"accessKey": {
-						"type": "SecureString",
-						"value": "[parameters('azurebatch_linked_service_accessKey')]"
+					{
+						"name": "Operation name",
+						"type": "varchar"
+					},
+					{
+						"name": "Status",
+						"type": "varchar"
+					},
+					{
+						"name": "Event category",
+						"type": "varchar"
+					},
+					{
+						"name": "Level",
+						"type": "varchar"
+					},
+					{
+						"name": "Time",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "Subscription",
+						"type": "varchar"
+					},
+					{
+						"name": "Event initiated by",
+						"type": "varchar"
+					},
+					{
+						"name": "Resource type",
+						"type": "varchar"
+					},
+					{
+						"name": "Resource group",
+						"type": "varchar"
+					},
+					{
+						"name": "Resource",
+						"type": "varchar"
 					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "logdata"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/azurebatch_storage_linked_service')]"
+				"[concat(variables('factoryId'), '/linkedServices/dp203_synapsedb001_linked_service')]"
 			]
 		},
 		{
@@ -577,6 +552,31 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/dp203_synapsedb001_linked_service')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/azurebatch_linked_service')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBatch",
+				"typeProperties": {
+					"batchUri": "[parameters('azurebatch_linked_service_properties_typeProperties_batchUri')]",
+					"poolName": "[parameters('azurebatch_linked_service_properties_typeProperties_poolName')]",
+					"accountName": "[parameters('azurebatch_linked_service_properties_typeProperties_accountName')]",
+					"linkedServiceName": {
+						"referenceName": "azurebatch_storage_linked_service",
+						"type": "LinkedServiceReference"
+					},
+					"accessKey": {
+						"type": "SecureString",
+						"value": "[parameters('azurebatch_linked_service_accessKey')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/azurebatch_storage_linked_service')]"
 			]
 		},
 		{
@@ -909,8 +909,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy data from CSV to Parquet",
-						"description": "Copy data from CSV to Parquet",
+						"name": "Copy data1",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -923,24 +922,21 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "DelimitedTextSource",
+								"type": "ParquetSource",
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
 									"recursive": true,
+									"wildcardFileName": "*.parquet",
 									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
+									"type": "ParquetReadSettings"
 								}
 							},
 							"sink": {
-								"type": "ParquetSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "ParquetWriteSettings"
-								}
+								"type": "SqlDWSink",
+								"writeBehavior": "Insert",
+								"sqlWriterUseTableLock": false
 							},
 							"enableStaging": false,
 							"translator": {
@@ -948,128 +944,134 @@
 								"mappings": [
 									{
 										"source": {
-											"name": "Correlation id",
+											"name": "Correlationid",
 											"type": "String",
-											"physicalType": "String"
+											"physicalType": "UTF8"
 										},
 										"sink": {
 											"name": "Correlationid",
-											"physicalType": "UTF8"
+											"type": "String",
+											"physicalType": "varchar"
 										}
 									},
 									{
 										"source": {
-											"name": "Operation name",
+											"name": "Operationname",
 											"type": "String",
-											"physicalType": "String"
+											"physicalType": "UTF8"
 										},
 										"sink": {
 											"name": "Operationname",
-											"physicalType": "UTF8"
+											"type": "String",
+											"physicalType": "varchar"
 										}
 									},
 									{
 										"source": {
 											"name": "Status",
 											"type": "String",
-											"physicalType": "String"
+											"physicalType": "UTF8"
 										},
 										"sink": {
 											"name": "Status",
 											"type": "String",
-											"physicalType": "UTF8"
+											"physicalType": "varchar"
 										}
 									},
 									{
 										"source": {
-											"name": "Event category",
+											"name": "Eventcategory",
 											"type": "String",
-											"physicalType": "String"
+											"physicalType": "UTF8"
 										},
 										"sink": {
 											"name": "Eventcategory",
-											"physicalType": "UTF8"
+											"type": "String",
+											"physicalType": "varchar"
 										}
 									},
 									{
 										"source": {
 											"name": "Level",
 											"type": "String",
-											"physicalType": "String"
+											"physicalType": "UTF8"
 										},
 										"sink": {
 											"name": "Level",
 											"type": "String",
-											"physicalType": "UTF8"
+											"physicalType": "varchar"
 										}
 									},
 									{
 										"source": {
 											"name": "Time",
 											"type": "String",
-											"physicalType": "String"
+											"physicalType": "UTF8"
 										},
 										"sink": {
 											"name": "Time",
 											"type": "String",
-											"physicalType": "UTF8"
+											"physicalType": "varchar"
 										}
 									},
 									{
 										"source": {
 											"name": "Subscription",
 											"type": "String",
-											"physicalType": "String"
+											"physicalType": "UTF8"
 										},
 										"sink": {
 											"name": "Subscription",
 											"type": "String",
-											"physicalType": "UTF8"
+											"physicalType": "varchar"
 										}
 									},
 									{
 										"source": {
-											"name": "Event initiated by",
+											"name": "Eventinitiatedby",
 											"type": "String",
-											"physicalType": "String"
+											"physicalType": "UTF8"
 										},
 										"sink": {
 											"name": "Eventinitiatedby",
-											"physicalType": "UTF8"
+											"type": "String",
+											"physicalType": "varchar"
 										}
 									},
 									{
 										"source": {
-											"name": "Resource type",
+											"name": "Resourcetype",
 											"type": "String",
-											"physicalType": "String"
+											"physicalType": "UTF8"
 										},
 										"sink": {
 											"name": "Resourcetype",
-											"physicalType": "UTF8"
+											"type": "String",
+											"physicalType": "varchar"
 										}
 									},
 									{
 										"source": {
-											"name": "Resource group",
+											"name": "Resourcegroup",
 											"type": "String",
-											"physicalType": "String"
+											"physicalType": "UTF8"
 										},
 										"sink": {
 											"name": "Resourcegroup",
-											"physicalType": "UTF8"
+											"type": "String",
+											"physicalType": "varchar"
 										}
 									},
 									{
 										"source": {
 											"name": "Resource",
 											"type": "String",
-											"physicalType": "String"
+											"physicalType": "UTF8"
 										},
 										"sink": {
 											"name": "Resource",
 											"type": "String",
-											"physicalType": "UTF8"
+											"physicalType": "varchar"
 										}
 									}
 								],
@@ -1082,14 +1084,14 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "dp203_logdata_csv",
+								"referenceName": "dp203_logdata_parquet",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "dp203_logdata_parquet",
+								"referenceName": "dp203_synapsedb_logdata_parquet",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -1103,8 +1105,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/dp203_logdata_csv')]",
-				"[concat(variables('factoryId'), '/datasets/dp203_logdata_parquet')]"
+				"[concat(variables('factoryId'), '/datasets/dp203_logdata_parquet')]",
+				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_logdata_parquet')]"
 			]
 		},
 		{
