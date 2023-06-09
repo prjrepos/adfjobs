@@ -1,5 +1,5 @@
 {
-	"name": "dp203_DestinationDataset_9es",
+	"name": "dp203_synapsedb_logdata",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "dp203_synapsedb001_linked_service",
@@ -57,7 +57,7 @@
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "logdata_parquet"
+			"table": "logdata"
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"

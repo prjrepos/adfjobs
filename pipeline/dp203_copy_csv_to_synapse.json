@@ -194,7 +194,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "dp203_DestinationDataset_9es",
+						"referenceName": "dp203_synapsedb_logdata",
 						"type": "DatasetReference"
 					}
 				]
