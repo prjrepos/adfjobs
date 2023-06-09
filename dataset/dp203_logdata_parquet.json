@@ -13,7 +13,7 @@
 				"folderPath": "raw/parquet",
 				"fileSystem": "data"
 			},
-			"compressionCodec": "none"
+			"compressionCodec": "snappy"
 		},
 		"schema": []
 	}
