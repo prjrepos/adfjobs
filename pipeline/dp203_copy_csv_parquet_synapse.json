@@ -176,7 +176,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "dp203_SourceDataset_9es",
+						"referenceName": "dp203_logdata_csv",
 						"type": "DatasetReference"
 					}
 				],

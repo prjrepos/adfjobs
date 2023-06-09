@@ -1,5 +1,5 @@
 {
-	"name": "dp203_SourceDataset_9es",
+	"name": "dp203_logdata_csv",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "dp203_adls2_coredatapoc_linked_service",
