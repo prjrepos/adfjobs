@@ -1028,68 +1028,6 @@
 								"parameters": {}
 							}
 						]
-					},
-					{
-						"name": "Copy Parquet data to synapse",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "Copy data from CSV to Parquet ",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "ParquetSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"wildcardFileName": "*.parquet",
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "ParquetReadSettings"
-								}
-							},
-							"sink": {
-								"type": "SqlDWSink",
-								"writeBehavior": "Insert",
-								"sqlWriterUseTableLock": false
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "dp203_logdata_parquet",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "dp203_DestinationDataset_9es",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
 					}
 				],
 				"policy": {
@@ -1100,8 +1038,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/dp203_SourceDataset_9es')]",
-				"[concat(variables('factoryId'), '/datasets/dp203_logdata_parquet')]",
-				"[concat(variables('factoryId'), '/datasets/dp203_DestinationDataset_9es')]"
+				"[concat(variables('factoryId'), '/datasets/dp203_logdata_parquet')]"
 			]
 		},
 		{
