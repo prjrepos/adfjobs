@@ -390,11 +390,12 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy data1",
+						"name": "CopyParquetToSynapse",
+						"description": "copy parquet file to synapse db",
 						"type": "Copy",
 						"dependsOn": [
 							{
-								"activity": "Copy data2",
+								"activity": "CopyCsvToParquet",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -586,7 +587,8 @@
 						]
 					},
 					{
-						"name": "Copy data2",
+						"name": "CopyCsvToParquet",
+						"description": "copy csv to parquet",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
