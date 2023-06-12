@@ -37,12 +37,8 @@
 					},
 					"sink": {
 						"type": "SqlDWSink",
-						"allowPolyBase": true,
-						"polyBaseSettings": {
-							"rejectValue": 0,
-							"rejectType": "value",
-							"useTypeDefault": true
-						}
+						"writeBehavior": "Insert",
+						"sqlWriterUseTableLock": false
 					},
 					"enableStaging": true,
 					"stagingSettings": {
@@ -58,114 +54,141 @@
 							{
 								"source": {
 									"name": "Correlationid",
-									"type": "String"
+									"type": "String",
+									"physicalType": "UTF8"
 								},
 								"sink": {
 									"name": "Correlationid",
-									"type": "String"
+									"type": "String",
+									"physicalType": "varchar"
 								}
 							},
 							{
 								"source": {
 									"name": "Operationname",
-									"type": "String"
+									"type": "String",
+									"physicalType": "UTF8"
 								},
 								"sink": {
 									"name": "Operationname",
-									"type": "String"
+									"type": "String",
+									"physicalType": "varchar"
 								}
 							},
 							{
 								"source": {
 									"name": "Status",
-									"type": "String"
+									"type": "String",
+									"physicalType": "UTF8"
 								},
 								"sink": {
 									"name": "Status",
-									"type": "String"
+									"type": "String",
+									"physicalType": "varchar"
 								}
 							},
 							{
 								"source": {
 									"name": "Eventcategory",
-									"type": "String"
+									"type": "String",
+									"physicalType": "UTF8"
 								},
 								"sink": {
 									"name": "Eventcategory",
-									"type": "String"
+									"type": "String",
+									"physicalType": "varchar"
 								}
 							},
 							{
 								"source": {
 									"name": "Level",
-									"type": "String"
+									"type": "String",
+									"physicalType": "UTF8"
 								},
 								"sink": {
 									"name": "Level",
-									"type": "String"
+									"type": "String",
+									"physicalType": "varchar"
 								}
 							},
 							{
 								"source": {
 									"name": "Time",
-									"type": "String"
+									"type": "String",
+									"physicalType": "UTF8"
 								},
 								"sink": {
 									"name": "Time",
-									"type": "DateTime"
+									"type": "DateTime",
+									"physicalType": "datetime"
 								}
 							},
 							{
 								"source": {
 									"name": "Subscription",
-									"type": "String"
+									"type": "String",
+									"physicalType": "UTF8"
 								},
 								"sink": {
 									"name": "Subscription",
-									"type": "String"
+									"type": "String",
+									"physicalType": "varchar"
 								}
 							},
 							{
 								"source": {
 									"name": "Eventinitiatedby",
-									"type": "String"
+									"type": "String",
+									"physicalType": "UTF8"
 								},
 								"sink": {
 									"name": "Eventinitiatedby",
-									"type": "String"
+									"type": "String",
+									"physicalType": "varchar"
 								}
 							},
 							{
 								"source": {
 									"name": "Resourcetype",
-									"type": "String"
+									"type": "String",
+									"physicalType": "UTF8"
 								},
 								"sink": {
 									"name": "Resourcetype",
-									"type": "String"
+									"type": "String",
+									"physicalType": "varchar"
 								}
 							},
 							{
 								"source": {
 									"name": "Resourcegroup",
-									"type": "String"
+									"type": "String",
+									"physicalType": "UTF8"
 								},
 								"sink": {
 									"name": "Resourcegroup",
-									"type": "String"
+									"type": "String",
+									"physicalType": "varchar"
 								}
 							},
 							{
 								"source": {
 									"name": "Resource",
-									"type": "String"
+									"type": "String",
+									"physicalType": "UTF8"
 								},
 								"sink": {
 									"name": "Resource",
-									"type": "String"
+									"type": "String",
+									"physicalType": "varchar"
 								}
 							}
-						]
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
 					}
 				},
 				"inputs": [
