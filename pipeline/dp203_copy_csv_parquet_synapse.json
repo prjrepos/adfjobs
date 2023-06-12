@@ -175,6 +175,13 @@
 									"type": "String",
 									"physicalType": "varchar"
 								}
+							},
+							{
+								"sink": {
+									"name": "FilePath",
+									"type": "String",
+									"physicalType": "varchar"
+								}
 							}
 						],
 						"typeConversion": true,
@@ -363,6 +370,17 @@
 								},
 								"sink": {
 									"name": "Resource",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "FilePath",
+									"type": "String"
+								},
+								"sink": {
+									"name": "FilePath",
 									"type": "String",
 									"physicalType": "UTF8"
 								}
