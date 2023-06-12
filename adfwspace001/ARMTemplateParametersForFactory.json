@@ -17,6 +17,9 @@
 		"cosmosdb_azurepoc_linked_service_connectionString": {
 			"value": ""
 		},
+		"dp203_sqldb_linked_service_connectionString": {
+			"value": ""
+		},
 		"dp203_synapsedb001_linked_service_connectionString": {
 			"value": ""
 		},

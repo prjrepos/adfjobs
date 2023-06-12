@@ -23,6 +23,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'cosmosdb_azurepoc_linked_service'"
 		},
+		"dp203_sqldb_linked_service_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'dp203_sqldb_linked_service'"
+		},
 		"dp203_synapsedb001_linked_service_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'dp203_synapsedb001_linked_service'"
@@ -1011,6 +1015,175 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/dp203_copy_using_query')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy_using_query",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "."
+							},
+							{
+								"name": "Destination",
+								"value": "dbo.FactSales"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT dt.[ProductID],dt.[SalesOrderID],dt.[OrderQty],dt.[UnitPrice],hd.[OrderDate],hd.[CustomerID],hd.[TaxAmt]\n  FROM [SalesLT].[SalesOrderDetail] dt\n  LEFT JOIN [SalesLT].[SalesOrderHeader] hd\n  ON dt.[SalesOrderID]=hd.[SalesOrderID]",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "SqlDWSink",
+								"writeBehavior": "Insert"
+							},
+							"enableStaging": false,
+							"validateDataConsistency": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "ProductID",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ProductID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "SalesOrderID",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "SalesOrderID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "CustomerID",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "CustomerID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "OrderQty",
+											"type": "Int16",
+											"physicalType": "smallint"
+										},
+										"sink": {
+											"name": "OrderQty",
+											"type": "Int16",
+											"physicalType": "smallint"
+										}
+									},
+									{
+										"source": {
+											"name": "UnitPrice",
+											"type": "Decimal",
+											"physicalType": "money",
+											"scale": 4,
+											"precision": 19
+										},
+										"sink": {
+											"name": "UnitPrice",
+											"type": "Decimal",
+											"physicalType": "money",
+											"scale": 4,
+											"precision": 19
+										}
+									},
+									{
+										"source": {
+											"name": "OrderDate",
+											"type": "DateTime",
+											"physicalType": "datetime"
+										},
+										"sink": {
+											"name": "OrderDate",
+											"type": "DateTime",
+											"physicalType": "datetime"
+										}
+									},
+									{
+										"source": {
+											"name": "TaxAmt",
+											"type": "Decimal",
+											"physicalType": "money",
+											"scale": 4,
+											"precision": 19
+										},
+										"sink": {
+											"name": "TaxAmt",
+											"type": "Decimal",
+											"physicalType": "money",
+											"scale": 4,
+											"precision": 19
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SourceDataset_jsq",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DestinationDataset_jsq",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SourceDataset_jsq')]",
+				"[concat(variables('factoryId'), '/datasets/DestinationDataset_jsq')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CosmosDbNoSqlContainer')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1075,6 +1248,123 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/cosmosdb_azurepoc_linked_service')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DestinationDataset_jsq')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dp203_synapsedb001_linked_service",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "ProductID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SalesOrderID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CustomerID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "OrderQty",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "UnitPrice",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "OrderDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "TaxAmt",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "FactSales"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dp203_synapsedb001_linked_service')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceDataset_jsq')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dp203_sqldb_linked_service",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ProductID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SalesOrderID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "OrderQty",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "UnitPrice",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "OrderDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "CustomerID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "TaxAmt",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					}
+				],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dp203_sqldb_linked_service')]"
 			]
 		},
 		{
@@ -1559,6 +1849,19 @@
 				"type": "AzureBlobFS",
 				"typeProperties": {
 					"url": "[parameters('dp203_adls2_coredatapoc_linked_service_properties_typeProperties_url')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dp203_sqldb_linked_service')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('dp203_sqldb_linked_service_connectionString')]"
 				}
 			},
 			"dependsOn": []
