@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy_jsq",
+				"name": "Copy_using_query",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
