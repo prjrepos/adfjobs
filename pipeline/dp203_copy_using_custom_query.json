@@ -1,9 +1,9 @@
 {
-	"name": "dp203_copy_using_query",
+	"name": "dp203_copy_using_custom_query",
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy_using_query",
+				"name": "copy_using_custom_query",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
