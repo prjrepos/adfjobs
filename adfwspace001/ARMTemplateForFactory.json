@@ -1160,14 +1160,14 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "SourceDataset_jsq",
+								"referenceName": "dp203_sqldb_sales",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "DestinationDataset_jsq",
+								"referenceName": "dp203_synapsedb_factsales",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -1181,8 +1181,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SourceDataset_jsq')]",
-				"[concat(variables('factoryId'), '/datasets/DestinationDataset_jsq')]"
+				"[concat(variables('factoryId'), '/datasets/dp203_sqldb_sales')]",
+				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_factsales')]"
 			]
 		},
 		{
@@ -1253,7 +1253,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DestinationDataset_jsq')]",
+			"name": "[concat(parameters('factoryName'), '/dp203_synapsedb_factsales')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1313,7 +1313,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SourceDataset_jsq')]",
+			"name": "[concat(parameters('factoryName'), '/dp203_sqldb_sales')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
