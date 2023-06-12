@@ -644,13 +644,13 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/dp203_copy_using_query')]",
+			"name": "[concat(parameters('factoryName'), '/dp203_copy_using_custom_query')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy_using_query",
+						"name": "copy_using_custom_query",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
