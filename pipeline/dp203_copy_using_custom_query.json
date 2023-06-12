@@ -140,13 +140,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "SourceDataset_jsq",
+						"referenceName": "dp203_sqldb_sales",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "DestinationDataset_jsq",
+						"referenceName": "dp203_synapsedb_factsales",
 						"type": "DatasetReference"
 					}
 				]

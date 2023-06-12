@@ -1,5 +1,5 @@
 {
-	"name": "DestinationDataset_jsq",
+	"name": "dp203_synapsedb_factsales",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "dp203_synapsedb001_linked_service",

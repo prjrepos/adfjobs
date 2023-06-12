@@ -1,5 +1,5 @@
 {
-	"name": "SourceDataset_jsq",
+	"name": "dp203_sqldb_sales",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "dp203_sqldb_linked_service",
