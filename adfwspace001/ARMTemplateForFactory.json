@@ -416,6 +416,12 @@
 						"typeProperties": {
 							"source": {
 								"type": "ParquetSource",
+								"additionalColumns": [
+									{
+										"name": "FilePath",
+										"value": "$$FILEPATH"
+									}
+								],
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
 									"recursive": true,
@@ -566,6 +572,17 @@
 											"type": "String",
 											"physicalType": "varchar"
 										}
+									},
+									{
+										"source": {
+											"name": "FilePath",
+											"type": "String"
+										},
+										"sink": {
+											"name": "FilePath",
+											"type": "String",
+											"physicalType": "varchar"
+										}
 									}
 								],
 								"typeConversion": true,
@@ -635,8 +652,7 @@
 											"physicalType": "String"
 										},
 										"sink": {
-											"name": "Correlation id",
-											"type": "String",
+											"name": "Correlationid",
 											"physicalType": "UTF8"
 										}
 									},
@@ -647,8 +663,7 @@
 											"physicalType": "String"
 										},
 										"sink": {
-											"name": "Operation name",
-											"type": "String",
+											"name": "Operationname",
 											"physicalType": "UTF8"
 										}
 									},
@@ -671,8 +686,7 @@
 											"physicalType": "String"
 										},
 										"sink": {
-											"name": "Event category",
-											"type": "String",
+											"name": "Eventcategory",
 											"physicalType": "UTF8"
 										}
 									},
@@ -691,7 +705,7 @@
 									{
 										"source": {
 											"name": "Time",
-											"type": "DateTime",
+											"type": "String",
 											"physicalType": "String"
 										},
 										"sink": {
@@ -719,8 +733,7 @@
 											"physicalType": "String"
 										},
 										"sink": {
-											"name": "Event initiated by",
-											"type": "String",
+											"name": "Eventinitiatedby",
 											"physicalType": "UTF8"
 										}
 									},
@@ -731,8 +744,7 @@
 											"physicalType": "String"
 										},
 										"sink": {
-											"name": "Resource type",
-											"type": "String",
+											"name": "Resourcetype",
 											"physicalType": "UTF8"
 										}
 									},
@@ -743,8 +755,7 @@
 											"physicalType": "String"
 										},
 										"sink": {
-											"name": "Resource group",
-											"type": "String",
+											"name": "Resourcegroup",
 											"physicalType": "UTF8"
 										}
 									},
