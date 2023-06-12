@@ -242,8 +242,7 @@
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "Correlation id",
-									"type": "String",
+									"name": "Correlationid",
 									"physicalType": "UTF8"
 								}
 							},
@@ -254,8 +253,7 @@
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "Operation name",
-									"type": "String",
+									"name": "Operationname",
 									"physicalType": "UTF8"
 								}
 							},
@@ -278,8 +276,7 @@
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "Event category",
-									"type": "String",
+									"name": "Eventcategory",
 									"physicalType": "UTF8"
 								}
 							},
@@ -298,7 +295,7 @@
 							{
 								"source": {
 									"name": "Time",
-									"type": "DateTime",
+									"type": "String",
 									"physicalType": "String"
 								},
 								"sink": {
@@ -326,8 +323,7 @@
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "Event initiated by",
-									"type": "String",
+									"name": "Eventinitiatedby",
 									"physicalType": "UTF8"
 								}
 							},
@@ -338,8 +334,7 @@
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "Resource type",
-									"type": "String",
+									"name": "Resourcetype",
 									"physicalType": "UTF8"
 								}
 							},
@@ -350,8 +345,7 @@
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "Resource group",
-									"type": "String",
+									"name": "Resourcegroup",
 									"physicalType": "UTF8"
 								}
 							},
