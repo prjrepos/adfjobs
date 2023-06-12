@@ -428,10 +428,21 @@
 							},
 							"sink": {
 								"type": "SqlDWSink",
-								"allowCopyCommand": true,
-								"copyCommandSettings": {}
+								"allowPolyBase": true,
+								"polyBaseSettings": {
+									"rejectValue": 0,
+									"rejectType": "value",
+									"useTypeDefault": true
+								}
 							},
-							"enableStaging": false,
+							"enableStaging": true,
+							"stagingSettings": {
+								"linkedServiceName": {
+									"referenceName": "dp203_adls2_coredatapoc_linked_service",
+									"type": "LinkedServiceReference"
+								},
+								"path": "adfjobs"
+							},
 							"translator": {
 								"type": "TabularTranslator",
 								"mappings": [
@@ -760,7 +771,8 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/dp203_logdata_parquet')]",
 				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_logdata_parquet')]",
-				"[concat(variables('factoryId'), '/datasets/dp203_logdata_csv')]"
+				"[concat(variables('factoryId'), '/datasets/dp203_logdata_csv')]",
+				"[concat(variables('factoryId'), '/linkedServices/dp203_adls2_coredatapoc_linked_service')]"
 			]
 		},
 		{
