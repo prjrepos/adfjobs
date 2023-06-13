@@ -104,34 +104,38 @@
 								"mappings": [
 									{
 										"source": {
-											"path": "$['$name']"
+											"path": "$['name']"
 										},
 										"sink": {
-											"name": "NAME"
+											"name": "NAME",
+											"type": "String"
 										}
 									},
 									{
 										"source": {
-											"path": "$['$age']"
+											"path": "$['age']"
 										},
 										"sink": {
-											"name": "AGE"
+											"name": "AGE",
+											"type": "String"
 										}
 									},
 									{
 										"source": {
-											"path": "$['$dob']"
+											"path": "$['dob']"
 										},
 										"sink": {
-											"name": "DOB"
+											"name": "DOB",
+											"type": "String"
 										}
 									},
 									{
 										"source": {
-											"path": "$['$city']"
+											"path": "$['city']"
 										},
 										"sink": {
-											"name": "CITY"
+											"name": "CITY",
+											"type": "String"
 										}
 									}
 								],
