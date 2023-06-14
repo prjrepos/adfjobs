@@ -1,0 +1,34 @@
+{
+	"name": "dp203_dataflow_factsales",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "dp203_sqldb_SalesOrderDetail",
+						"type": "DatasetReference"
+					},
+					"name": "dp203SqldbSalesOrderDetailStream"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          ProductID as integer,",
+				"          SalesOrderID as integer,",
+				"          OrderQty as integer,",
+				"          UnitPrice as decimal(19,4),",
+				"          OrderDate as timestamp,",
+				"          CustomerID as integer,",
+				"          TaxAmt as decimal(19,4)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> dp203SqldbSalesOrderDetailStream"
+			]
+		}
+	}
+}
