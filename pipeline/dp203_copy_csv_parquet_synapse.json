@@ -37,8 +37,7 @@
 					},
 					"sink": {
 						"type": "SqlDWSink",
-						"writeBehavior": "Insert",
-						"sqlWriterUseTableLock": false
+						"allowCopyCommand": true
 					},
 					"enableStaging": true,
 					"stagingSettings": {
@@ -54,141 +53,114 @@
 							{
 								"source": {
 									"name": "Correlationid",
-									"type": "String",
-									"physicalType": "UTF8"
+									"type": "String"
 								},
 								"sink": {
 									"name": "Correlationid",
-									"type": "String",
-									"physicalType": "varchar"
+									"type": "String"
 								}
 							},
 							{
 								"source": {
 									"name": "Operationname",
-									"type": "String",
-									"physicalType": "UTF8"
+									"type": "String"
 								},
 								"sink": {
 									"name": "Operationname",
-									"type": "String",
-									"physicalType": "varchar"
+									"type": "String"
 								}
 							},
 							{
 								"source": {
 									"name": "Status",
-									"type": "String",
-									"physicalType": "UTF8"
+									"type": "String"
 								},
 								"sink": {
 									"name": "Status",
-									"type": "String",
-									"physicalType": "varchar"
+									"type": "String"
 								}
 							},
 							{
 								"source": {
 									"name": "Eventcategory",
-									"type": "String",
-									"physicalType": "UTF8"
+									"type": "String"
 								},
 								"sink": {
 									"name": "Eventcategory",
-									"type": "String",
-									"physicalType": "varchar"
+									"type": "String"
 								}
 							},
 							{
 								"source": {
 									"name": "Level",
-									"type": "String",
-									"physicalType": "UTF8"
+									"type": "String"
 								},
 								"sink": {
 									"name": "Level",
-									"type": "String",
-									"physicalType": "varchar"
+									"type": "String"
 								}
 							},
 							{
 								"source": {
 									"name": "Time",
-									"type": "String",
-									"physicalType": "UTF8"
+									"type": "String"
 								},
 								"sink": {
 									"name": "Time",
-									"type": "DateTime",
-									"physicalType": "datetime"
+									"type": "DateTime"
 								}
 							},
 							{
 								"source": {
 									"name": "Subscription",
-									"type": "String",
-									"physicalType": "UTF8"
+									"type": "String"
 								},
 								"sink": {
 									"name": "Subscription",
-									"type": "String",
-									"physicalType": "varchar"
+									"type": "String"
 								}
 							},
 							{
 								"source": {
 									"name": "Eventinitiatedby",
-									"type": "String",
-									"physicalType": "UTF8"
+									"type": "String"
 								},
 								"sink": {
 									"name": "Eventinitiatedby",
-									"type": "String",
-									"physicalType": "varchar"
+									"type": "String"
 								}
 							},
 							{
 								"source": {
 									"name": "Resourcetype",
-									"type": "String",
-									"physicalType": "UTF8"
+									"type": "String"
 								},
 								"sink": {
 									"name": "Resourcetype",
-									"type": "String",
-									"physicalType": "varchar"
+									"type": "String"
 								}
 							},
 							{
 								"source": {
 									"name": "Resourcegroup",
-									"type": "String",
-									"physicalType": "UTF8"
+									"type": "String"
 								},
 								"sink": {
 									"name": "Resourcegroup",
-									"type": "String",
-									"physicalType": "varchar"
+									"type": "String"
 								}
 							},
 							{
 								"source": {
 									"name": "Resource",
-									"type": "String",
-									"physicalType": "UTF8"
+									"type": "String"
 								},
 								"sink": {
 									"name": "Resource",
-									"type": "String",
-									"physicalType": "varchar"
+									"type": "String"
 								}
 							}
-						],
-						"typeConversion": true,
-						"typeConversionSettings": {
-							"allowDataTruncation": true,
-							"treatBooleanAsNumber": false
-						}
+						]
 					}
 				},
 				"inputs": [
