@@ -19,7 +19,15 @@
 					"name": "dp203SqldbSalesOrderHeaderStream"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dp203_synapsedb_factsales",
+						"type": "DatasetReference"
+					},
+					"name": "dp203SynapsedbFactSales"
+				}
+			],
 			"transformations": [
 				{
 					"name": "SalesOrderDetailJoinSalesOrderHeader"
@@ -71,7 +79,37 @@
 				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> SalesOrderDetailJoinSalesOrderHeader"
+				"     broadcast: 'auto')~> SalesOrderDetailJoinSalesOrderHeader",
+				"SalesOrderDetailJoinSalesOrderHeader sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ProductID as integer,",
+				"          SalesOrderID as integer,",
+				"          CustomerID as integer,",
+				"          OrderQty as integer,",
+				"          UnitPrice as decimal(19,4),",
+				"          OrderDate as timestamp,",
+				"          TaxAmt as decimal(19,4)",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     staged: true,",
+				"     allowCopyCommand: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          ProductID,",
+				"          SalesOrderID = dp203SqldbSalesOrderDetailStream@SalesOrderID,",
+				"          CustomerID = dp203SqldbSalesOrderHeaderStream@CustomerID,",
+				"          OrderQty,",
+				"          UnitPrice,",
+				"          OrderDate = dp203SqldbSalesOrderHeaderStream@OrderDate,",
+				"          TaxAmt = dp203SqldbSalesOrderHeaderStream@TaxAmt",
+				"     )) ~> dp203SynapsedbFactSales"
 			]
 		}
 	}
