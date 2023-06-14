@@ -1,5 +1,5 @@
 {
-	"name": "dp203_dataflow_DimCustomer",
+	"name": "dp203_dataflow_Dimensions",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
