@@ -55,6 +55,9 @@
 				},
 				{
 					"name": "JoinProductCategory"
+				},
+				{
+					"name": "SelectColumnStream"
 				}
 			],
 			"scriptLines": [
@@ -134,6 +137,16 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> JoinProductCategory",
+				"JoinProductCategory select(mapColumn(",
+				"          ProductID,",
+				"          ProductName = dp203SqldbProductStream@Name,",
+				"          ProductCategoryID = dp203SqldbProductStream@ProductCategoryID,",
+				"          ProductModelID = dp203SqldbProductModelStream@ProductModelID,",
+				"          ProductModelName = dp203SqldbProductModelStream@Name,",
+				"          ProductCategoryName = dp203SqldbProductCategoryStream@Name",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectColumnStream",
 				"dp203SqldbCustomerStream sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -156,7 +169,7 @@
 				"          CompanyName,",
 				"          SalesPerson",
 				"     )) ~> dp203SynapsedbDimCustomer",
-				"JoinProductCategory sink(allowSchemaDrift: true,",
+				"SelectColumnStream sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          ProductID as integer,",
