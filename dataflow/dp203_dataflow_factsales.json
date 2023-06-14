@@ -33,7 +33,10 @@
 					"name": "SalesOrderDetailJoinSalesOrderHeader"
 				},
 				{
-					"name": "SelectColumns"
+					"name": "SelectColumnStream"
+				},
+				{
+					"name": "deriveTotalAmount"
 				}
 			],
 			"scriptLines": [
@@ -93,8 +96,9 @@
 				"          TaxAmt = dp203SqldbSalesOrderHeaderStream@TaxAmt",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SelectColumns",
-				"SelectColumns sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectColumnStream",
+				"SelectColumnStream derive() ~> deriveTotalAmount",
+				"deriveTotalAmount sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          ProductID as integer,",
