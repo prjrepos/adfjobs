@@ -45,7 +45,14 @@
 							"useTypeDefault": true
 						}
 					},
-					"enableStaging": false,
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "dp203_adls2_coredatapoc_linked_service",
+							"type": "LinkedServiceReference"
+						},
+						"path": "adfjobs"
+					},
 					"translator": {
 						"type": "TabularTranslator",
 						"mappings": [
