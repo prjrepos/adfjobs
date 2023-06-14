@@ -97,7 +97,7 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectColumnStream",
-				"SelectColumnStream derive() ~> deriveTotalAmount",
+				"SelectColumnStream derive(TotalAmount = multiply(UnitPrice,OrderQty)) ~> deriveTotalAmount",
 				"deriveTotalAmount sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
