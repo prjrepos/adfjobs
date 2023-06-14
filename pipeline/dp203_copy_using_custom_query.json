@@ -140,7 +140,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "dp203_sqldb_sales",
+						"referenceName": "dp203_sqldb_SalesOrderDetail",
 						"type": "DatasetReference"
 					}
 				],
