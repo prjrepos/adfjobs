@@ -1,5 +1,5 @@
 {
-	"name": "dp203_sqldb_sales",
+	"name": "dp203_sqldb_SalesOrderDetail",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "dp203_sqldb_linked_service",
