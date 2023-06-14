@@ -10,6 +10,27 @@
 						"type": "DatasetReference"
 					},
 					"name": "dp203SqldbCustomerStream"
+				},
+				{
+					"dataset": {
+						"referenceName": "dp203_sqldb_product",
+						"type": "DatasetReference"
+					},
+					"name": "dp203SqldbProductStream"
+				},
+				{
+					"dataset": {
+						"referenceName": "dp203_sqldb_ProductModel",
+						"type": "DatasetReference"
+					},
+					"name": "dp203SqldbProductModelStream"
+				},
+				{
+					"dataset": {
+						"referenceName": "dp203_sqldb_ProductCategory",
+						"type": "DatasetReference"
+					},
+					"name": "dp203SqldbProductCategoryStream"
 				}
 			],
 			"sinks": [
@@ -19,9 +40,23 @@
 						"type": "DatasetReference"
 					},
 					"name": "dp203SynapsedbDimCustomer"
+				},
+				{
+					"dataset": {
+						"referenceName": "dp203_synapsedb_DimProduct",
+						"type": "DatasetReference"
+					},
+					"name": "dp203SynapsedbProductStream"
 				}
 			],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "ProductJoinProductModel"
+				},
+				{
+					"name": "JoinProductCategory"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          CustomerID as integer,",
@@ -44,6 +79,61 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> dp203SqldbCustomerStream",
+				"source(output(",
+				"          ProductID as integer,",
+				"          Name as string,",
+				"          ProductNumber as string,",
+				"          Color as string,",
+				"          StandardCost as decimal(19,4),",
+				"          ListPrice as decimal(19,4),",
+				"          Size as string,",
+				"          Weight as decimal(8,2),",
+				"          ProductCategoryID as integer,",
+				"          ProductModelID as integer,",
+				"          SellStartDate as timestamp,",
+				"          SellEndDate as timestamp,",
+				"          DiscontinuedDate as timestamp,",
+				"          ThumbNailPhoto as binary,",
+				"          ThumbnailPhotoFileName as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> dp203SqldbProductStream",
+				"source(output(",
+				"          ProductModelID as integer,",
+				"          Name as string,",
+				"          CatalogDescription as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> dp203SqldbProductModelStream",
+				"source(output(",
+				"          ProductCategoryID as integer,",
+				"          ParentProductCategoryID as integer,",
+				"          Name as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> dp203SqldbProductCategoryStream",
+				"dp203SqldbProductStream, dp203SqldbProductModelStream join(dp203SqldbProductStream@ProductModelID == dp203SqldbProductModelStream@ProductModelID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> ProductJoinProductModel",
+				"ProductJoinProductModel, dp203SqldbProductCategoryStream join(dp203SqldbProductStream@ProductCategoryID == dp203SqldbProductCategoryStream@ProductCategoryID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JoinProductCategory",
 				"dp203SqldbCustomerStream sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -65,7 +155,35 @@
 				"          CustomerID,",
 				"          CompanyName,",
 				"          SalesPerson",
-				"     )) ~> dp203SynapsedbDimCustomer"
+				"     )) ~> dp203SynapsedbDimCustomer",
+				"JoinProductCategory sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ProductID as integer,",
+				"          ProductModelID as integer,",
+				"          ProductcategoryID as integer,",
+				"          ProductName as string,",
+				"          ProductModelName as string,",
+				"          ProductCategoryName as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     staged: true,",
+				"     allowCopyCommand: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          ProductID,",
+				"          ProductModelID = dp203SqldbProductModelStream@ProductModelID,",
+				"          ProductcategoryID = dp203SqldbProductCategoryStream@ProductCategoryID,",
+				"          ProductName = dp203SqldbProductStream@Name,",
+				"          ProductModelName = dp203SqldbProductModelStream@Name,",
+				"          ProductCategoryName = dp203SqldbProductCategoryStream@Name",
+				"     )) ~> dp203SynapsedbProductStream"
 			]
 		}
 	}
