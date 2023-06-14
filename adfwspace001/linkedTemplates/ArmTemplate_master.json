@@ -101,9 +101,6 @@
 					"dp203_synapsedb001_linked_service_connectionString": {
 						"value": "[parameters('dp203_synapsedb001_linked_service_connectionString')]"
 					},
-					"azurebatch_linked_service_accessKey": {
-						"value": "[parameters('azurebatch_linked_service_accessKey')]"
-					},
 					"adls2_ samplepoc2022_linked_service_properties_typeProperties_url": {
 						"value": "[parameters('adls2_ samplepoc2022_linked_service_properties_typeProperties_url')]"
 					},
@@ -115,15 +112,6 @@
 					},
 					"dp203_adls2_coredatapoc_linked_service_properties_typeProperties_url": {
 						"value": "[parameters('dp203_adls2_coredatapoc_linked_service_properties_typeProperties_url')]"
-					},
-					"azurebatch_linked_service_properties_typeProperties_batchUri": {
-						"value": "[parameters('azurebatch_linked_service_properties_typeProperties_batchUri')]"
-					},
-					"azurebatch_linked_service_properties_typeProperties_poolName": {
-						"value": "[parameters('azurebatch_linked_service_properties_typeProperties_poolName')]"
-					},
-					"azurebatch_linked_service_properties_typeProperties_accountName": {
-						"value": "[parameters('azurebatch_linked_service_properties_typeProperties_accountName')]"
 					}
 				}
 			},
@@ -142,6 +130,18 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"azurebatch_linked_service_accessKey": {
+						"value": "[parameters('azurebatch_linked_service_accessKey')]"
+					},
+					"azurebatch_linked_service_properties_typeProperties_batchUri": {
+						"value": "[parameters('azurebatch_linked_service_properties_typeProperties_batchUri')]"
+					},
+					"azurebatch_linked_service_properties_typeProperties_poolName": {
+						"value": "[parameters('azurebatch_linked_service_properties_typeProperties_poolName')]"
+					},
+					"azurebatch_linked_service_properties_typeProperties_accountName": {
+						"value": "[parameters('azurebatch_linked_service_properties_typeProperties_accountName')]"
 					}
 				}
 			},
