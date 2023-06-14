@@ -107,7 +107,8 @@
 				"          OrderQty as integer,",
 				"          UnitPrice as decimal(19,4),",
 				"          OrderDate as timestamp,",
-				"          TaxAmt as decimal(19,4)",
+				"          TaxAmt as decimal(19,4),",
+				"          TotalAmount as decimal(19,4)",
 				"     ),",
 				"     deletable:false,",
 				"     insertable:true,",
@@ -121,12 +122,13 @@
 				"     errorHandlingOption: 'stopOnFirstError',",
 				"     mapColumn(",
 				"          ProductID,",
-				"          SalesOrderID = dp203SqldbSalesOrderDetailStream@SalesOrderID,",
-				"          CustomerID = dp203SqldbSalesOrderHeaderStream@CustomerID,",
+				"          SalesOrderID,",
+				"          CustomerID,",
 				"          OrderQty,",
 				"          UnitPrice,",
-				"          OrderDate = dp203SqldbSalesOrderHeaderStream@OrderDate,",
-				"          TaxAmt = dp203SqldbSalesOrderHeaderStream@TaxAmt",
+				"          OrderDate,",
+				"          TaxAmt,",
+				"          TotalAmount",
 				"     )) ~> dp203SynapsedbFactSales"
 			]
 		}
