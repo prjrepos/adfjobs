@@ -178,6 +178,7 @@
 				"surrogateKeyProductSKStream sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
+				"          ProductSK as integer,",
 				"          ProductID as integer,",
 				"          ProductModelID as integer,",
 				"          ProductcategoryID as integer,",
@@ -196,12 +197,13 @@
 				"     skipDuplicateMapOutputs: true,",
 				"     errorHandlingOption: 'stopOnFirstError',",
 				"     mapColumn(",
+				"          ProductSK,",
 				"          ProductID,",
-				"          ProductModelID = dp203SqldbProductModelStream@ProductModelID,",
-				"          ProductcategoryID = dp203SqldbProductCategoryStream@ProductCategoryID,",
-				"          ProductName = dp203SqldbProductStream@Name,",
-				"          ProductModelName = dp203SqldbProductModelStream@Name,",
-				"          ProductCategoryName = dp203SqldbProductCategoryStream@Name",
+				"          ProductModelID,",
+				"          ProductcategoryID = ProductCategoryID,",
+				"          ProductName,",
+				"          ProductModelName,",
+				"          ProductCategoryName",
 				"     )) ~> dp203SynapsedbProductStream"
 			]
 		}
