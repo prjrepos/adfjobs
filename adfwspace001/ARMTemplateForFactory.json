@@ -2109,7 +2109,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/dp203_dataflow_sql_to_synapse')]",
+			"name": "[concat(parameters('factoryName'), '/dp203_df1_sql_to_synapse')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
