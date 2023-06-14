@@ -1,5 +1,5 @@
 {
-	"name": "dp203_dataflow_sql_to_synapse",
+	"name": "dp203_df1_sql_to_synapse",
 	"properties": {
 		"activities": [
 			{
