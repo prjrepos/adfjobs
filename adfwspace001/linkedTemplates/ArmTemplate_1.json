@@ -1061,6 +1061,60 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dp203_dataflow_sql_to_synapse')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "dp203_dataflow_fastsales",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dp203_dataflow_factsales",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"dp203SqldbSalesOrderDetailStream": {},
+									"dp203SqldbSalesOrderHeaderStream": {},
+									"dp203SynapsedbFactSales": {}
+								}
+							},
+							"staging": {
+								"linkedService": {
+									"referenceName": "adls2_coredatapoc_linked_service",
+									"type": "LinkedServiceReference"
+								},
+								"folderPath": "adfjobs"
+							},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dp203_dataflow_factsales')]"
+			]
 		}
 	]
 }
