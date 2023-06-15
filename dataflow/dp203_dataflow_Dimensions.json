@@ -38,6 +38,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "GetMaxCustomerSK"
+				},
+				{
+					"dataset": {
+						"referenceName": "dp203_synapsedb_MaxProductSK",
+						"type": "DatasetReference"
+					},
+					"name": "GetMaxProductSK"
 				}
 			],
 			"sinks": [
@@ -57,6 +64,9 @@
 				},
 				{
 					"name": "CachedMaxCustomerSK"
+				},
+				{
+					"name": "CachedMaxProductSK"
 				}
 			],
 			"transformations": [
@@ -158,6 +168,15 @@
 				"     query: 'SELECT MAX([CustomerSK]) as CustomerSK FROM [dbo].[DimCustomer]',",
 				"     format: 'query',",
 				"     staged: true) ~> GetMaxCustomerSK",
+				"source(output(",
+				"          ProductSK as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'select MAX([ProductSK]) as ProductSK from [dbo].[DimProduct]\\n',",
+				"     format: 'query',",
+				"     staged: true) ~> GetMaxProductSK",
 				"dp203SqldbProductStream, dp203SqldbProductModelStream join(dp203SqldbProductStream@ProductModelID == dp203SqldbProductModelStream@ProductModelID,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
@@ -255,7 +274,17 @@
 				"     saveOrder: 1,",
 				"     mapColumn(",
 				"          CustomerSK",
-				"     )) ~> CachedMaxCustomerSK"
+				"     )) ~> CachedMaxCustomerSK",
+				"GetMaxProductSK sink(validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     store: 'cache',",
+				"     format: 'inline',",
+				"     output: false,",
+				"     saveOrder: 1,",
+				"     mapColumn(",
+				"          ProductSK",
+				"     )) ~> CachedMaxProductSK"
 			]
 		}
 	}
