@@ -165,7 +165,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     query: 'SELECT MAX([CustomerSK]) as CustomerSK FROM [dbo].[DimCustomer]',",
+				"     query: 'SELECT ISNULL(MAX([CustomerSK]),0) as CustomerSK FROM [dbo].[DimCustomer]',",
 				"     format: 'query',",
 				"     staged: true) ~> GetMaxCustomerSK",
 				"source(output(",
