@@ -191,7 +191,7 @@
 				"selectColumns keyGenerate(output(CustomerSK as long),",
 				"     startAt: 1L,",
 				"     stepValue: 1L) ~> customerSK",
-				"customerSK derive(CustomerSK = ERROR_FUNCTION('')) ~> IncrementProductSK",
+				"customerSK derive(CustomerSK = CustomerSK + CachedMaxCustomerSK#outputs()[1].CustomerSK) ~> IncrementProductSK",
 				"IncrementProductSK sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
