@@ -77,6 +77,9 @@
 				},
 				{
 					"name": "customerSK"
+				},
+				{
+					"name": "IncrementProductSK"
 				}
 			],
 			"scriptLines": [
@@ -188,7 +191,8 @@
 				"selectColumns keyGenerate(output(CustomerSK as long),",
 				"     startAt: 1L,",
 				"     stepValue: 1L) ~> customerSK",
-				"customerSK sink(allowSchemaDrift: true,",
+				"customerSK derive(CustomerSK = ERROR_FUNCTION('')) ~> IncrementProductSK",
+				"IncrementProductSK sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          CustomerSK as integer,",
@@ -245,7 +249,6 @@
 				"GetMaxCustomerSK sink(validateSchema: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     keys:['CustomerSK'],",
 				"     store: 'cache',",
 				"     format: 'inline',",
 				"     output: false,",
