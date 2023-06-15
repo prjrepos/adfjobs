@@ -31,6 +31,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "dp203SqldbProductCategoryStream"
+				},
+				{
+					"dataset": {
+						"referenceName": "dp203_synapsedb_MaxCustSK",
+						"type": "DatasetReference"
+					},
+					"name": "GetMaxCustomerSK"
 				}
 			],
 			"sinks": [
@@ -136,6 +143,18 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> dp203SqldbProductCategoryStream",
+				"source(output(",
+				"          CustomerSK as integer,",
+				"          CustomerID as integer,",
+				"          CompanyName as string,",
+				"          SalesPerson as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'select MAX(CustomerSK) as CustomerSK from dbo.DimCustomer;',",
+				"     format: 'query',",
+				"     staged: true) ~> GetMaxCustomerSK",
 				"dp203SqldbProductStream, dp203SqldbProductModelStream join(dp203SqldbProductStream@ProductModelID == dp203SqldbProductModelStream@ProductModelID,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
