@@ -54,6 +54,9 @@
 						"type": "DatasetReference"
 					},
 					"name": "dp203SynapsedbProductStream"
+				},
+				{
+					"name": "CachedMaxCustomerSK"
 				}
 			],
 			"transformations": [
@@ -144,15 +147,12 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> dp203SqldbProductCategoryStream",
 				"source(output(",
-				"          CustomerSK as integer,",
-				"          CustomerID as integer,",
-				"          CompanyName as string,",
-				"          SalesPerson as string",
+				"          CustomerSK as integer",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     query: 'select MAX(CustomerSK) as CustomerSK from dbo.DimCustomer;',",
+				"     query: 'SELECT MAX([CustomerSK]) as CustomerSK FROM [dbo].[DimCustomer]',",
 				"     format: 'query',",
 				"     staged: true) ~> GetMaxCustomerSK",
 				"dp203SqldbProductStream, dp203SqldbProductModelStream join(dp203SqldbProductStream@ProductModelID == dp203SqldbProductModelStream@ProductModelID,",
@@ -241,7 +241,18 @@
 				"          ProductName,",
 				"          ProductModelName,",
 				"          ProductCategoryName",
-				"     )) ~> dp203SynapsedbProductStream"
+				"     )) ~> dp203SynapsedbProductStream",
+				"GetMaxCustomerSK sink(validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     keys:['CustomerSK'],",
+				"     store: 'cache',",
+				"     format: 'inline',",
+				"     output: false,",
+				"     saveOrder: 1,",
+				"     mapColumn(",
+				"          CustomerSK",
+				"     )) ~> CachedMaxCustomerSK"
 			]
 		}
 	}
