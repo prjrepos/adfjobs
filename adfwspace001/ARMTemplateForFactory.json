@@ -1238,9 +1238,11 @@
 									"dp203SqldbProductModelStream": {},
 									"dp203SqldbProductCategoryStream": {},
 									"GetMaxCustomerSK": {},
+									"GetMaxProductSK": {},
 									"dp203SynapsedbDimCustomer": {},
 									"dp203SynapsedbProductStream": {},
-									"CachedMaxCustomerSK": {}
+									"CachedMaxCustomerSK": {},
+									"CachedMaxProductSK": {}
 								}
 							},
 							"staging": {
@@ -1254,7 +1256,8 @@
 								"coreCount": 8,
 								"computeType": "General"
 							},
-							"traceLevel": "Fine"
+							"traceLevel": "Fine",
+							"sourceStagingConcurrency": 1
 						}
 					}
 				],
@@ -2149,6 +2152,46 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/dp203_synapsedb_MaxCustSK')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dp203_synapsedb001_linked_service",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "CustomerSK",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CustomerID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CompanyName",
+						"type": "varchar"
+					},
+					{
+						"name": "SalesPerson",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "DimCustomer"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dp203_synapsedb001_linked_service')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/dp203_synapsedb_factsales')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2525,6 +2568,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "GetMaxCustomerSK"
+						},
+						{
+							"dataset": {
+								"referenceName": "dp203_synapsedb_MaxProductSK",
+								"type": "DatasetReference"
+							},
+							"name": "GetMaxProductSK"
 						}
 					],
 					"sinks": [
@@ -2544,6 +2594,9 @@
 						},
 						{
 							"name": "CachedMaxCustomerSK"
+						},
+						{
+							"name": "CachedMaxProductSK"
 						}
 					],
 					"transformations": [
@@ -2645,6 +2698,15 @@
 						"     query: 'SELECT MAX([CustomerSK]) as CustomerSK FROM [dbo].[DimCustomer]',",
 						"     format: 'query',",
 						"     staged: true) ~> GetMaxCustomerSK",
+						"source(output(",
+						"          ProductSK as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     query: 'select MAX([ProductSK]) as ProductSK from [dbo].[DimProduct]\\n',",
+						"     format: 'query',",
+						"     staged: true) ~> GetMaxProductSK",
 						"dp203SqldbProductStream, dp203SqldbProductModelStream join(dp203SqldbProductStream@ProductModelID == dp203SqldbProductModelStream@ProductModelID,",
 						"     joinType:'left',",
 						"     matchType:'exact',",
@@ -2742,7 +2804,17 @@
 						"     saveOrder: 1,",
 						"     mapColumn(",
 						"          CustomerSK",
-						"     )) ~> CachedMaxCustomerSK"
+						"     )) ~> CachedMaxCustomerSK",
+						"GetMaxProductSK sink(validateSchema: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     store: 'cache',",
+						"     format: 'inline',",
+						"     output: false,",
+						"     saveOrder: 1,",
+						"     mapColumn(",
+						"          ProductSK",
+						"     )) ~> CachedMaxProductSK"
 					]
 				}
 			},
@@ -2752,6 +2824,7 @@
 				"[concat(variables('factoryId'), '/datasets/dp203_sqldb_ProductModel')]",
 				"[concat(variables('factoryId'), '/datasets/dp203_sqldb_ProductCategory')]",
 				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_MaxCustSK')]",
+				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_MaxProductSK')]",
 				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_DimCustomer')]",
 				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_DimProduct')]"
 			]
@@ -2900,7 +2973,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/dp203_synapsedb_MaxCustSK')]",
+			"name": "[concat(parameters('factoryName'), '/dp203_synapsedb_MaxProductSK')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -2912,27 +2985,41 @@
 				"type": "AzureSqlDWTable",
 				"schema": [
 					{
-						"name": "CustomerSK",
+						"name": "ProductSK",
 						"type": "int",
 						"precision": 10
 					},
 					{
-						"name": "CustomerID",
+						"name": "ProductID",
 						"type": "int",
 						"precision": 10
 					},
 					{
-						"name": "CompanyName",
+						"name": "ProductModelID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductcategoryID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductName",
 						"type": "varchar"
 					},
 					{
-						"name": "SalesPerson",
+						"name": "ProductModelName",
+						"type": "varchar"
+					},
+					{
+						"name": "ProductCategoryName",
 						"type": "varchar"
 					}
 				],
 				"typeProperties": {
 					"schema": "dbo",
-					"table": "DimCustomer"
+					"table": "DimProduct"
 				}
 			},
 			"dependsOn": [
