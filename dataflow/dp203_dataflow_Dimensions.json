@@ -64,6 +64,9 @@
 				},
 				{
 					"name": "selectColumns"
+				},
+				{
+					"name": "customerSK"
 				}
 			],
 			"scriptLines": [
@@ -163,7 +166,10 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> selectColumns",
-				"selectColumns sink(allowSchemaDrift: true,",
+				"selectColumns keyGenerate(output(CustomerSK as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> customerSK",
+				"customerSK sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          CustomerID as integer,",
