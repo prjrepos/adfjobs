@@ -61,6 +61,9 @@
 				},
 				{
 					"name": "surrogateKeyStream"
+				},
+				{
+					"name": "selectColumns"
 				}
 			],
 			"scriptLines": [
@@ -153,7 +156,14 @@
 				"SelectColumnStream keyGenerate(output(ProductSK as long),",
 				"     startAt: 1L,",
 				"     stepValue: 1L) ~> surrogateKeyStream",
-				"dp203SqldbCustomerStream sink(allowSchemaDrift: true,",
+				"dp203SqldbCustomerStream select(mapColumn(",
+				"          CustomerID,",
+				"          CompanyName,",
+				"          SalesPerson",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectColumns",
+				"selectColumns sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          CustomerID as integer,",
