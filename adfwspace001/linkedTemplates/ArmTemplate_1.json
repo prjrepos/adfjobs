@@ -1445,6 +1445,12 @@
 						},
 						{
 							"name": "surrogateKeyStream"
+						},
+						{
+							"name": "selectColumns"
+						},
+						{
+							"name": "customerSK"
 						}
 					],
 					"scriptLines": [
@@ -1537,9 +1543,20 @@
 						"SelectColumnStream keyGenerate(output(ProductSK as long),",
 						"     startAt: 1L,",
 						"     stepValue: 1L) ~> surrogateKeyStream",
-						"dp203SqldbCustomerStream sink(allowSchemaDrift: true,",
+						"dp203SqldbCustomerStream select(mapColumn(",
+						"          CustomerID,",
+						"          CompanyName,",
+						"          SalesPerson",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> selectColumns",
+						"selectColumns keyGenerate(output(CustomerSK as long),",
+						"     startAt: 1L,",
+						"     stepValue: 1L) ~> customerSK",
+						"customerSK sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
+						"          CustomerSK as integer,",
 						"          CustomerID as integer,",
 						"          CompanyName as string,",
 						"          SalesPerson as string",
@@ -1555,6 +1572,7 @@
 						"     skipDuplicateMapOutputs: true,",
 						"     errorHandlingOption: 'stopOnFirstError',",
 						"     mapColumn(",
+						"          CustomerSK,",
 						"          CustomerID,",
 						"          CompanyName,",
 						"          SalesPerson",
