@@ -3027,7 +3027,11 @@
 							"name": "dp203SynapsedbLogSink"
 						}
 					],
-					"transformations": [],
+					"transformations": [
+						{
+							"name": "filterNullResourcegroup"
+						}
+					],
 					"scriptLines": [
 						"source(output(",
 						"          Correlationid as string,",
@@ -3046,7 +3050,8 @@
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false,",
 						"     format: 'parquet') ~> dp203ParquetLogStream",
-						"dp203ParquetLogStream sink(allowSchemaDrift: true,",
+						"dp203ParquetLogStream filter(isNull(Resourcegroup)) ~> filterNullResourcegroup",
+						"filterNullResourcegroup sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
 						"          {Correlation id} as string,",
