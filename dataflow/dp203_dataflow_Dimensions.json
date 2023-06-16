@@ -31,6 +31,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "dp203SqldbProductCategoryStream"
+				},
+				{
+					"dataset": {
+						"referenceName": "dp203_synapsedb_DimProduct",
+						"type": "DatasetReference"
+					},
+					"name": "dp203SynapsedbProductStream"
 				}
 			],
 			"sinks": [
@@ -46,7 +53,7 @@
 						"referenceName": "dp203_synapsedb_DimProduct",
 						"type": "DatasetReference"
 					},
-					"name": "dp203SynapsedbProductStream"
+					"name": "dp203SynapsedbProductSink"
 				}
 			],
 			"transformations": [
@@ -136,6 +143,20 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> dp203SqldbProductCategoryStream",
+				"source(output(",
+				"          ProductSK as integer,",
+				"          ProductID as integer,",
+				"          ProductModelID as integer,",
+				"          ProductcategoryID as integer,",
+				"          ProductName as string,",
+				"          ProductModelName as string,",
+				"          ProductCategoryName as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table',",
+				"     staged: true) ~> dp203SynapsedbProductStream",
 				"dp203SqldbProductStream, dp203SqldbProductModelStream join(dp203SqldbProductStream@ProductModelID == dp203SqldbProductModelStream@ProductModelID,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
@@ -222,7 +243,7 @@
 				"          ProductName,",
 				"          ProductModelName,",
 				"          ProductCategoryName",
-				"     )) ~> dp203SynapsedbProductStream"
+				"     )) ~> dp203SynapsedbProductSink"
 			]
 		}
 	}
