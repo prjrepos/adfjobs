@@ -2,7 +2,7 @@
 	"name": "dp203_synapsedb_logdata",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "dp203_synapsedb001_linked_service",
+			"referenceName": "dp203_synapsedb_linked_service",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
@@ -57,7 +57,7 @@
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "logdata"
+			"table": "logdata_parquet"
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
