@@ -1330,6 +1330,53 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/dp203_df4_parquet_json_synapse')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "dp203ParquetToCsvToSynapse",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dp203_parquet_to_json_log",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"dp203LogdataParquetStream": {},
+									"dp203LogdataJsonStream": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dp203_parquet_to_json_log')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CosmosDbNoSqlContainer')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1567,6 +1614,30 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/dp203_adls2_coredatapoc_linked_service')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dp203_logdata_json')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "adls2_coredatapoc_linked_service",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "raw/json",
+						"fileSystem": "data"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/adls2_coredatapoc_linked_service')]"
 			]
 		},
 		{
@@ -3173,6 +3244,67 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/dp203_logdata_parquet')]",
 				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_logdata')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dp203_parquet_to_json_log')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "dp203_logdata_parquet",
+								"type": "DatasetReference"
+							},
+							"name": "dp203LogdataParquetStream"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "dp203_logdata_json",
+								"type": "DatasetReference"
+							},
+							"name": "dp203LogdataJsonStream"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"source(output(",
+						"          Correlationid as string,",
+						"          Operationname as string,",
+						"          Status as string,",
+						"          Eventcategory as string,",
+						"          Level as string,",
+						"          Time as timestamp,",
+						"          Subscription as string,",
+						"          Eventinitiatedby as string,",
+						"          Resourcetype as string,",
+						"          Resourcegroup as string,",
+						"          Resource as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> dp203LogdataParquetStream",
+						"dp203LogdataParquetStream sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['log.json'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> dp203LogdataJsonStream"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/dp203_logdata_parquet')]",
+				"[concat(variables('factoryId'), '/datasets/dp203_logdata_json')]"
 			]
 		}
 	]
