@@ -1242,8 +1242,10 @@
 									"dp203SqldbProductModelStream": {},
 									"dp203SqldbProductCategoryStream": {},
 									"dp203SynapsedbProductStream": {},
+									"GetMaxCustomerSK": {},
 									"dp203SynapsedbDimCustomer": {},
-									"dp203SynapsedbProductSink": {}
+									"dp203SynapsedbProductSink": {},
+									"CachedMaxCustomerSK": {}
 								}
 							},
 							"staging": {
@@ -1257,7 +1259,8 @@
 								"coreCount": 8,
 								"computeType": "General"
 							},
-							"traceLevel": "Fine"
+							"traceLevel": "Fine",
+							"sourceStagingConcurrency": 1
 						}
 					}
 				],
@@ -2211,7 +2214,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "dp203_synapsedb001_linked_service",
+					"referenceName": "dp203_synapsedb_linked_service",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -2242,7 +2245,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/dp203_synapsedb001_linked_service')]"
+				"[concat(variables('factoryId'), '/linkedServices/dp203_synapsedb_linked_service')]"
 			]
 		},
 		{
@@ -2689,6 +2692,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "dp203SynapsedbProductStream"
+						},
+						{
+							"dataset": {
+								"referenceName": "dp203_synapsedb_MaxCustSK",
+								"type": "DatasetReference"
+							},
+							"name": "GetMaxCustomerSK"
 						}
 					],
 					"sinks": [
@@ -2705,6 +2715,9 @@
 								"type": "DatasetReference"
 							},
 							"name": "dp203SynapsedbProductSink"
+						},
+						{
+							"name": "CachedMaxCustomerSK"
 						}
 					],
 					"transformations": [
@@ -2728,6 +2741,9 @@
 						},
 						{
 							"name": "ProductAlreadyExists"
+						},
+						{
+							"name": "deriveCustomerSK"
 						}
 					],
 					"scriptLines": [
@@ -2811,6 +2827,15 @@
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table',",
 						"     staged: true) ~> dp203SynapsedbProductStream",
+						"source(output(",
+						"          CustomerSK as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     query: 'SELECT ISNULL(MAX([CustomerSK]),0) as CustomerSK FROM [dbo].[DimCustomer]',",
+						"     format: 'query',",
+						"     staged: true) ~> GetMaxCustomerSK",
 						"ProductAlreadyExists, dp203SqldbProductModelStream join(dp203SqldbProductStream@ProductModelID == dp203SqldbProductModelStream@ProductModelID,",
 						"     joinType:'left',",
 						"     matchType:'exact',",
@@ -2847,7 +2872,8 @@
 						"dp203SqldbProductStream, dp203SynapsedbProductStream exists(dp203SqldbProductStream@ProductID == dp203SynapsedbProductStream@ProductID,",
 						"     negate:true,",
 						"     broadcast: 'auto')~> ProductAlreadyExists",
-						"customerSK sink(allowSchemaDrift: true,",
+						"customerSK derive(CustomerSK = CustomerSK + CachedMaxCustomerSK#outputs()[1].CustomerSK) ~> deriveCustomerSK",
+						"deriveCustomerSK sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
 						"          CustomerSK as integer,",
@@ -2900,7 +2926,17 @@
 						"          ProductName,",
 						"          ProductModelName,",
 						"          ProductCategoryName",
-						"     )) ~> dp203SynapsedbProductSink"
+						"     )) ~> dp203SynapsedbProductSink",
+						"GetMaxCustomerSK sink(validateSchema: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     store: 'cache',",
+						"     format: 'inline',",
+						"     output: false,",
+						"     saveOrder: 1,",
+						"     mapColumn(",
+						"          CustomerSK",
+						"     )) ~> CachedMaxCustomerSK"
 					]
 				}
 			},
@@ -2910,6 +2946,7 @@
 				"[concat(variables('factoryId'), '/datasets/dp203_sqldb_ProductModel')]",
 				"[concat(variables('factoryId'), '/datasets/dp203_sqldb_ProductCategory')]",
 				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_DimProduct')]",
+				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_MaxCustSK')]",
 				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_DimCustomer')]"
 			]
 		},
