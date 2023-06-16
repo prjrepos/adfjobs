@@ -2,7 +2,7 @@
 	"name": "dp203_synapsedb_DimProduct",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "dp203_synapsedb001_linked_service",
+			"referenceName": "dp203_synapsedb_linked_service",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
