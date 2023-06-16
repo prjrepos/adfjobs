@@ -74,6 +74,9 @@
 				},
 				{
 					"name": "customerSK"
+				},
+				{
+					"name": "ProductAlreadyExists"
 				}
 			],
 			"scriptLines": [
@@ -157,7 +160,7 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table',",
 				"     staged: true) ~> dp203SynapsedbProductStream",
-				"dp203SqldbProductStream, dp203SqldbProductModelStream join(dp203SqldbProductStream@ProductModelID == dp203SqldbProductModelStream@ProductModelID,",
+				"ProductAlreadyExists, dp203SqldbProductModelStream join(dp203SqldbProductStream@ProductModelID == dp203SqldbProductModelStream@ProductModelID,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
@@ -190,6 +193,9 @@
 				"selectColumns keyGenerate(output(CustomerSK as long),",
 				"     startAt: 1L,",
 				"     stepValue: 1L) ~> customerSK",
+				"dp203SqldbProductStream exists(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
+				"     negate:false,",
+				"     broadcast: 'auto')~> ProductAlreadyExists",
 				"customerSK sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
