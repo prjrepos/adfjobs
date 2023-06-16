@@ -1505,6 +1505,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "dp203SqldbProductCategoryStream"
+						},
+						{
+							"dataset": {
+								"referenceName": "dp203_synapsedb_DimProduct",
+								"type": "DatasetReference"
+							},
+							"name": "dp203SynapsedbProductStream"
 						}
 					],
 					"sinks": [
@@ -1520,7 +1527,7 @@
 								"referenceName": "dp203_synapsedb_DimProduct",
 								"type": "DatasetReference"
 							},
-							"name": "dp203SynapsedbProductStream"
+							"name": "dp203SynapsedbProductSink"
 						}
 					],
 					"transformations": [
@@ -1541,6 +1548,9 @@
 						},
 						{
 							"name": "customerSK"
+						},
+						{
+							"name": "ProductAlreadyExists"
 						}
 					],
 					"scriptLines": [
@@ -1610,7 +1620,21 @@
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table') ~> dp203SqldbProductCategoryStream",
-						"dp203SqldbProductStream, dp203SqldbProductModelStream join(dp203SqldbProductStream@ProductModelID == dp203SqldbProductModelStream@ProductModelID,",
+						"source(output(",
+						"          ProductSK as integer,",
+						"          ProductID as integer,",
+						"          ProductModelID as integer,",
+						"          ProductcategoryID as integer,",
+						"          ProductName as string,",
+						"          ProductModelName as string,",
+						"          ProductCategoryName as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table',",
+						"     staged: true) ~> dp203SynapsedbProductStream",
+						"ProductAlreadyExists, dp203SqldbProductModelStream join(dp203SqldbProductStream@ProductModelID == dp203SqldbProductModelStream@ProductModelID,",
 						"     joinType:'left',",
 						"     matchType:'exact',",
 						"     ignoreSpaces: false,",
@@ -1643,6 +1667,9 @@
 						"selectColumns keyGenerate(output(CustomerSK as long),",
 						"     startAt: 1L,",
 						"     stepValue: 1L) ~> customerSK",
+						"dp203SqldbProductStream, dp203SynapsedbProductStream exists(dp203SqldbProductStream@ProductID == dp203SynapsedbProductStream@ProductID,",
+						"     negate:true,",
+						"     broadcast: 'auto')~> ProductAlreadyExists",
 						"customerSK sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
@@ -1696,7 +1723,7 @@
 						"          ProductName,",
 						"          ProductModelName,",
 						"          ProductCategoryName",
-						"     )) ~> dp203SynapsedbProductStream"
+						"     )) ~> dp203SynapsedbProductSink"
 					]
 				}
 			},
@@ -1927,8 +1954,9 @@
 									"dp203SqldbProductStream": {},
 									"dp203SqldbProductModelStream": {},
 									"dp203SqldbProductCategoryStream": {},
+									"dp203SynapsedbProductStream": {},
 									"dp203SynapsedbDimCustomer": {},
-									"dp203SynapsedbProductStream": {}
+									"dp203SynapsedbProductSink": {}
 								}
 							},
 							"staging": {
