@@ -119,6 +119,58 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/dp203_synapsedb_MaxProductSK')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dp203_synapsedb001_linked_service",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "ProductSK",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductModelID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductcategoryID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductName",
+						"type": "varchar"
+					},
+					{
+						"name": "ProductModelName",
+						"type": "varchar"
+					},
+					{
+						"name": "ProductCategoryName",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "DimProduct"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/dp203_synapsedb_factsales')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -333,58 +385,6 @@
 						"type": "SecureString",
 						"value": "[parameters('azurebatch_linked_service_accessKey')]"
 					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dp203_synapsedb_MaxProductSK')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "dp203_synapsedb001_linked_service",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlDWTable",
-				"schema": [
-					{
-						"name": "ProductSK",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ProductID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ProductModelID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ProductcategoryID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ProductName",
-						"type": "varchar"
-					},
-					{
-						"name": "ProductModelName",
-						"type": "varchar"
-					},
-					{
-						"name": "ProductCategoryName",
-						"type": "varchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "DimProduct"
 				}
 			},
 			"dependsOn": []
@@ -1505,13 +1505,6 @@
 								"type": "DatasetReference"
 							},
 							"name": "dp203SqldbProductCategoryStream"
-						},
-						{
-							"dataset": {
-								"referenceName": "dp203_synapsedb_MaxCustSK",
-								"type": "DatasetReference"
-							},
-							"name": "GetMaxCustomerSK"
 						}
 					],
 					"sinks": [
@@ -1528,9 +1521,6 @@
 								"type": "DatasetReference"
 							},
 							"name": "dp203SynapsedbProductStream"
-						},
-						{
-							"name": "CachedMaxCustomerSK"
 						}
 					],
 					"transformations": [
@@ -1551,9 +1541,6 @@
 						},
 						{
 							"name": "customerSK"
-						},
-						{
-							"name": "IncrementProductSK"
 						}
 					],
 					"scriptLines": [
@@ -1623,15 +1610,6 @@
 						"     validateSchema: false,",
 						"     isolationLevel: 'READ_UNCOMMITTED',",
 						"     format: 'table') ~> dp203SqldbProductCategoryStream",
-						"source(output(",
-						"          CustomerSK as integer",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     isolationLevel: 'READ_UNCOMMITTED',",
-						"     query: 'SELECT ISNULL(MAX([CustomerSK]),0) as CustomerSK FROM [dbo].[DimCustomer]',",
-						"     format: 'query',",
-						"     staged: true) ~> GetMaxCustomerSK",
 						"dp203SqldbProductStream, dp203SqldbProductModelStream join(dp203SqldbProductStream@ProductModelID == dp203SqldbProductModelStream@ProductModelID,",
 						"     joinType:'left',",
 						"     matchType:'exact',",
@@ -1665,8 +1643,7 @@
 						"selectColumns keyGenerate(output(CustomerSK as long),",
 						"     startAt: 1L,",
 						"     stepValue: 1L) ~> customerSK",
-						"customerSK derive(CustomerSK = CustomerSK + CachedMaxCustomerSK#outputs()[1].CustomerSK) ~> IncrementProductSK",
-						"IncrementProductSK sink(allowSchemaDrift: true,",
+						"customerSK sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
 						"          CustomerSK as integer,",
@@ -1719,22 +1696,11 @@
 						"          ProductName,",
 						"          ProductModelName,",
 						"          ProductCategoryName",
-						"     )) ~> dp203SynapsedbProductStream",
-						"GetMaxCustomerSK sink(validateSchema: false,",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     store: 'cache',",
-						"     format: 'inline',",
-						"     output: false,",
-						"     saveOrder: 1,",
-						"     mapColumn(",
-						"          CustomerSK",
-						"     )) ~> CachedMaxCustomerSK"
+						"     )) ~> dp203SynapsedbProductStream"
 					]
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_MaxCustSK')]",
 				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_DimProduct')]"
 			]
 		},
@@ -1961,10 +1927,8 @@
 									"dp203SqldbProductStream": {},
 									"dp203SqldbProductModelStream": {},
 									"dp203SqldbProductCategoryStream": {},
-									"GetMaxCustomerSK": {},
 									"dp203SynapsedbDimCustomer": {},
-									"dp203SynapsedbProductStream": {},
-									"CachedMaxCustomerSK": {}
+									"dp203SynapsedbProductStream": {}
 								}
 							},
 							"staging": {
