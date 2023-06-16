@@ -27,6 +27,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'dp203_synapsedb001_linked_service'"
 		},
+		"dp203_synapsedb_linked_service_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'dp203_synapsedb_linked_service'"
+		},
 		"adls2_ samplepoc2022_linked_service_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://samplepoc2022.dfs.core.windows.net/"
@@ -152,6 +156,19 @@
 				"type": "AzureSqlDW",
 				"typeProperties": {
 					"connectionString": "[parameters('dp203_synapsedb001_linked_service_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dp203_synapsedb_linked_service')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('dp203_synapsedb_linked_service_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -939,46 +956,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/dp203_sqldb_linked_service')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dp203_synapsedb_DimCustomer')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "dp203_synapsedb001_linked_service",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlDWTable",
-				"schema": [
-					{
-						"name": "CustomerSK",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "CustomerID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "CompanyName",
-						"type": "varchar"
-					},
-					{
-						"name": "SalesPerson",
-						"type": "varchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "DimCustomer"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/dp203_synapsedb001_linked_service')]"
 			]
 		}
 	]

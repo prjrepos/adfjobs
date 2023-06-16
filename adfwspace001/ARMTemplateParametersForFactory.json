@@ -23,6 +23,9 @@
 		"dp203_synapsedb001_linked_service_connectionString": {
 			"value": ""
 		},
+		"dp203_synapsedb_linked_service_connectionString": {
+			"value": ""
+		},
 		"adls2_ samplepoc2022_linked_service_properties_typeProperties_url": {
 			"value": "https://samplepoc2022.dfs.core.windows.net/"
 		},

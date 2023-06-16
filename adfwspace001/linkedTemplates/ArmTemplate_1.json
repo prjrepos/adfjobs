@@ -29,12 +29,50 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/dp203_synapsedb_DimProduct')]",
+			"name": "[concat(parameters('factoryName'), '/dp203_synapsedb_DimCustomer')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
 					"referenceName": "dp203_synapsedb001_linked_service",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "CustomerSK",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CustomerID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CompanyName",
+						"type": "varchar"
+					},
+					{
+						"name": "SalesPerson",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "DimCustomer"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dp203_synapsedb_DimProduct')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dp203_synapsedb_linked_service",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -240,7 +278,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "dp203_synapsedb001_linked_service",
+					"referenceName": "dp203_synapsedb_linked_service",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -295,7 +333,7 @@
 				],
 				"typeProperties": {
 					"schema": "dbo",
-					"table": "logdata"
+					"table": "logdata_parquet"
 				}
 			},
 			"dependsOn": []
@@ -1728,7 +1766,8 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_DimProduct')]"
+				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_DimProduct')]",
+				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_DimCustomer')]"
 			]
 		},
 		{
@@ -1870,6 +1909,82 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_factsales')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dp203_dataflow_log')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "dp203_logdata_parquet",
+								"type": "DatasetReference"
+							},
+							"name": "dp203ParquetLogStream"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "dp203_synapsedb_logdata",
+								"type": "DatasetReference"
+							},
+							"name": "dp203SynapsedbLogSink"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"source(output(",
+						"          Correlationid as string,",
+						"          Operationname as string,",
+						"          Status as string,",
+						"          Eventcategory as string,",
+						"          Level as string,",
+						"          Time as timestamp,",
+						"          Subscription as string,",
+						"          Eventinitiatedby as string,",
+						"          Resourcetype as string,",
+						"          Resourcegroup as string,",
+						"          Resource as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> dp203ParquetLogStream",
+						"dp203ParquetLogStream sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          {Correlation id} as string,",
+						"          {Operation name} as string,",
+						"          Status as string,",
+						"          {Event category} as string,",
+						"          Level as string,",
+						"          Time as timestamp,",
+						"          Subscription as string,",
+						"          {Event initiated by} as string,",
+						"          {Resource type} as string,",
+						"          {Resource group} as string,",
+						"          Resource as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     staged: true,",
+						"     allowCopyCommand: true,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> dp203SynapsedbLogSink"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_logdata')]"
 			]
 		},
 		{

@@ -31,6 +31,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'dp203_synapsedb001_linked_service'"
 		},
+		"dp203_synapsedb_linked_service_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'dp203_synapsedb_linked_service'"
+		},
 		"adls2_ samplepoc2022_linked_service_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://samplepoc2022.dfs.core.windows.net/"
@@ -2099,7 +2103,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "dp203_synapsedb001_linked_service",
+					"referenceName": "dp203_synapsedb_linked_service",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -2144,7 +2148,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/dp203_synapsedb001_linked_service')]"
+				"[concat(variables('factoryId'), '/linkedServices/dp203_synapsedb_linked_service')]"
 			]
 		},
 		{
@@ -2313,7 +2317,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "dp203_synapsedb001_linked_service",
+					"referenceName": "dp203_synapsedb_linked_service",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -2368,11 +2372,11 @@
 				],
 				"typeProperties": {
 					"schema": "dbo",
-					"table": "logdata"
+					"table": "logdata_parquet"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/dp203_synapsedb001_linked_service')]"
+				"[concat(variables('factoryId'), '/linkedServices/dp203_synapsedb_linked_service')]"
 			]
 		},
 		{
@@ -2983,6 +2987,96 @@
 				"[concat(variables('factoryId'), '/datasets/dp203_sqldb_SalesOrderDetail')]",
 				"[concat(variables('factoryId'), '/datasets/dp203_sqldb_SalesOrderHeader')]",
 				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_factsales')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dp203_synapsedb_linked_service')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('dp203_synapsedb_linked_service_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dp203_dataflow_log')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "dp203_logdata_parquet",
+								"type": "DatasetReference"
+							},
+							"name": "dp203ParquetLogStream"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "dp203_synapsedb_logdata",
+								"type": "DatasetReference"
+							},
+							"name": "dp203SynapsedbLogSink"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"source(output(",
+						"          Correlationid as string,",
+						"          Operationname as string,",
+						"          Status as string,",
+						"          Eventcategory as string,",
+						"          Level as string,",
+						"          Time as timestamp,",
+						"          Subscription as string,",
+						"          Eventinitiatedby as string,",
+						"          Resourcetype as string,",
+						"          Resourcegroup as string,",
+						"          Resource as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> dp203ParquetLogStream",
+						"dp203ParquetLogStream sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          {Correlation id} as string,",
+						"          {Operation name} as string,",
+						"          Status as string,",
+						"          {Event category} as string,",
+						"          Level as string,",
+						"          Time as timestamp,",
+						"          Subscription as string,",
+						"          {Event initiated by} as string,",
+						"          {Resource type} as string,",
+						"          {Resource group} as string,",
+						"          Resource as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     staged: true,",
+						"     allowCopyCommand: true,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> dp203SynapsedbLogSink"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/dp203_logdata_parquet')]",
+				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_logdata')]"
 			]
 		}
 	]
