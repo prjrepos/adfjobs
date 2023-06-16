@@ -44,7 +44,7 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     format: 'parquet') ~> dp203ParquetLogStream",
-				"dp203ParquetLogStream filter(isNull(Resourcegroup)) ~> filterNullResourcegroup",
+				"dp203ParquetLogStream filter(!isNull(Resourcegroup)) ~> filterNullResourcegroup",
 				"filterNullResourcegroup sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
