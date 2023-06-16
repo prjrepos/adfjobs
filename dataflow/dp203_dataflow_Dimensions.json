@@ -87,6 +87,9 @@
 				},
 				{
 					"name": "ProductAlreadyExists"
+				},
+				{
+					"name": "deriveCustomerSK"
 				}
 			],
 			"scriptLines": [
@@ -215,7 +218,8 @@
 				"dp203SqldbProductStream, dp203SynapsedbProductStream exists(dp203SqldbProductStream@ProductID == dp203SynapsedbProductStream@ProductID,",
 				"     negate:true,",
 				"     broadcast: 'auto')~> ProductAlreadyExists",
-				"customerSK sink(allowSchemaDrift: true,",
+				"customerSK derive(CustomerSK = CustomerSK + CachedMaxCustomerSK#outputs()[1].CustomerSK) ~> deriveCustomerSK",
+				"deriveCustomerSK sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          CustomerSK as integer,",
