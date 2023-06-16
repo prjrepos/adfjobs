@@ -1,0 +1,19 @@
+{
+	"name": "dp203_logdata_json",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "adls2_coredatapoc_linked_service",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "raw/json",
+				"fileSystem": "data"
+			}
+		},
+		"schema": {}
+	}
+}
