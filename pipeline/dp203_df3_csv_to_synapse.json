@@ -19,6 +19,13 @@
 						"referenceName": "dp203_dataflow_log",
 						"type": "DataFlowReference"
 					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "adls2_coredatapoc_linked_service",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "adfjobs"
+					},
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
