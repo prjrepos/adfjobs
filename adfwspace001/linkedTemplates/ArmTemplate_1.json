@@ -438,7 +438,7 @@
 				],
 				"typeProperties": {
 					"schema": "dbo",
-					"table": "logdata_parquet"
+					"table": "logdata"
 				}
 			},
 			"dependsOn": []

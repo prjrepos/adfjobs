@@ -146,7 +146,7 @@
 											"path": "$['Correlationid']"
 										},
 										"sink": {
-											"name": "Correlationid",
+											"name": "Correlation id",
 											"type": "String"
 										}
 									},
@@ -155,7 +155,7 @@
 											"path": "$['Operationname']"
 										},
 										"sink": {
-											"name": "Operationname",
+											"name": "Operation name",
 											"type": "String"
 										}
 									},
@@ -173,7 +173,7 @@
 											"path": "$['Eventcategory']"
 										},
 										"sink": {
-											"name": "Eventcategory",
+											"name": "Event category",
 											"type": "String"
 										}
 									},
@@ -200,7 +200,7 @@
 											"path": "$['Eventinitiatedby']"
 										},
 										"sink": {
-											"name": "Eventinitiatedby",
+											"name": "Event initiated by",
 											"type": "String"
 										}
 									},
@@ -209,7 +209,7 @@
 											"path": "$['Resourcetype']"
 										},
 										"sink": {
-											"name": "Resourcetype",
+											"name": "Resource type",
 											"type": "String"
 										}
 									},
@@ -218,7 +218,7 @@
 											"path": "$['Resourcegroup']"
 										},
 										"sink": {
-											"name": "Resourcegroup",
+											"name": "Resource group",
 											"type": "String"
 										}
 									},
@@ -231,7 +231,8 @@
 											"type": "String"
 										}
 									}
-								]
+								],
+								"collectionReference": ""
 							}
 						},
 						"inputs": [
@@ -243,7 +244,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "dp203_synapsedb_logdata_parquet",
+								"referenceName": "dp203_synapsedb_logdata",
 								"type": "DatasetReference",
 								"parameters": {}
 							}

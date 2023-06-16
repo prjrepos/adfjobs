@@ -1412,7 +1412,7 @@
 											"path": "$['Correlationid']"
 										},
 										"sink": {
-											"name": "Correlationid",
+											"name": "Correlation id",
 											"type": "String"
 										}
 									},
@@ -1421,7 +1421,7 @@
 											"path": "$['Operationname']"
 										},
 										"sink": {
-											"name": "Operationname",
+											"name": "Operation name",
 											"type": "String"
 										}
 									},
@@ -1439,7 +1439,7 @@
 											"path": "$['Eventcategory']"
 										},
 										"sink": {
-											"name": "Eventcategory",
+											"name": "Event category",
 											"type": "String"
 										}
 									},
@@ -1466,7 +1466,7 @@
 											"path": "$['Eventinitiatedby']"
 										},
 										"sink": {
-											"name": "Eventinitiatedby",
+											"name": "Event initiated by",
 											"type": "String"
 										}
 									},
@@ -1475,7 +1475,7 @@
 											"path": "$['Resourcetype']"
 										},
 										"sink": {
-											"name": "Resourcetype",
+											"name": "Resource type",
 											"type": "String"
 										}
 									},
@@ -1484,7 +1484,7 @@
 											"path": "$['Resourcegroup']"
 										},
 										"sink": {
-											"name": "Resourcegroup",
+											"name": "Resource group",
 											"type": "String"
 										}
 									},
@@ -1497,7 +1497,8 @@
 											"type": "String"
 										}
 									}
-								]
+								],
+								"collectionReference": ""
 							}
 						},
 						"inputs": [
@@ -1509,7 +1510,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "dp203_synapsedb_logdata_parquet",
+								"referenceName": "dp203_synapsedb_logdata",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -1525,7 +1526,7 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/dp203_parquet_to_json_log')]",
 				"[concat(variables('factoryId'), '/datasets/dp203_logdata_json')]",
-				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_logdata_parquet')]"
+				"[concat(variables('factoryId'), '/datasets/dp203_synapsedb_logdata')]"
 			]
 		},
 		{
@@ -2652,7 +2653,7 @@
 				],
 				"typeProperties": {
 					"schema": "dbo",
-					"table": "logdata_parquet"
+					"table": "logdata"
 				}
 			},
 			"dependsOn": [
