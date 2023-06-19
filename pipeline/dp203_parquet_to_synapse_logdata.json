@@ -1,5 +1,5 @@
 {
-	"name": "dp203_df3_csv_to_synapse",
+	"name": "dp203_parquet_to_synapse_logdata",
 	"properties": {
 		"activities": [
 			{
