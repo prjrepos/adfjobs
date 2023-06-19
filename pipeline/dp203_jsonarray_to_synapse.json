@@ -19,6 +19,13 @@
 						"referenceName": "dp203_jsonarray_customer",
 						"type": "DataFlowReference"
 					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "adls2_coredatapoc_linked_service",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "adfjobs"
+					},
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
