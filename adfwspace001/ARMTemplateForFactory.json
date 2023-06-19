@@ -1276,60 +1276,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/dp203_df3_csv_to_synapse')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "dp203_df3_csv_to_synapse",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "dp203_dataflow_log",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"dp203ParquetLogStream": {},
-									"dp203SynapsedbLogSink": {}
-								}
-							},
-							"staging": {
-								"linkedService": {
-									"referenceName": "adls2_coredatapoc_linked_service",
-									"type": "LinkedServiceReference"
-								},
-								"folderPath": "adfjobs"
-							},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/dp203_dataflow_log')]",
-				"[concat(variables('factoryId'), '/linkedServices/adls2_coredatapoc_linked_service')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/dp203_df4_parquet_json_synapse')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1580,6 +1526,60 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/dp203_jsonarray_customer')]",
+				"[concat(variables('factoryId'), '/linkedServices/adls2_coredatapoc_linked_service')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dp203_parquet_to_synapse_logdata')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "dp203_parquet_to_synapse_log",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dp203_dataflow_log",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"dp203ParquetLogStream": {},
+									"dp203SynapsedbLogSink": {}
+								}
+							},
+							"staging": {
+								"linkedService": {
+									"referenceName": "adls2_coredatapoc_linked_service",
+									"type": "LinkedServiceReference"
+								},
+								"folderPath": "adfjobs"
+							},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dp203_dataflow_log')]",
 				"[concat(variables('factoryId'), '/linkedServices/adls2_coredatapoc_linked_service')]"
 			]
 		},
@@ -2761,11 +2761,11 @@
 				"type": "AzureSqlDWTable",
 				"schema": [
 					{
-						"name": "Correlation id",
+						"name": "Correlationid",
 						"type": "varchar"
 					},
 					{
-						"name": "Operation name",
+						"name": "Operationname",
 						"type": "varchar"
 					},
 					{
@@ -2773,7 +2773,7 @@
 						"type": "varchar"
 					},
 					{
-						"name": "Event category",
+						"name": "Eventcategory",
 						"type": "varchar"
 					},
 					{
@@ -2791,15 +2791,15 @@
 						"type": "varchar"
 					},
 					{
-						"name": "Event initiated by",
+						"name": "Eventinitiatedby",
 						"type": "varchar"
 					},
 					{
-						"name": "Resource type",
+						"name": "Resourcetype",
 						"type": "varchar"
 					},
 					{
-						"name": "Resource group",
+						"name": "Resourcegroup",
 						"type": "varchar"
 					},
 					{
@@ -2809,7 +2809,7 @@
 				],
 				"typeProperties": {
 					"schema": "dbo",
-					"table": "logdata"
+					"table": "logdata_parquet"
 				}
 			},
 			"dependsOn": [
@@ -3501,6 +3501,9 @@
 					"transformations": [
 						{
 							"name": "filterNullResourcegroup"
+						},
+						{
+							"name": "SplitByResourceGroup"
 						}
 					],
 					"scriptLines": [
@@ -3522,19 +3525,21 @@
 						"     ignoreNoFilesFound: false,",
 						"     format: 'parquet') ~> dp203ParquetLogStream",
 						"dp203ParquetLogStream filter(!isNull(Resourcegroup)) ~> filterNullResourcegroup",
-						"filterNullResourcegroup sink(allowSchemaDrift: true,",
+						"filterNullResourcegroup split(equalsIgnoreCase(Resourcegroup,'app-grp'),",
+						"     disjoint: false) ~> SplitByResourceGroup@(AppgrpStream, NonAppgrpStream)",
+						"SplitByResourceGroup@AppgrpStream sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
-						"          {Correlation id} as string,",
-						"          {Operation name} as string,",
+						"          Correlationid as string,",
+						"          Operationname as string,",
 						"          Status as string,",
-						"          {Event category} as string,",
+						"          Eventcategory as string,",
 						"          Level as string,",
 						"          Time as timestamp,",
 						"          Subscription as string,",
-						"          {Event initiated by} as string,",
-						"          {Resource type} as string,",
-						"          {Resource group} as string,",
+						"          Eventinitiatedby as string,",
+						"          Resourcetype as string,",
+						"          Resourcegroup as string,",
 						"          Resource as string",
 						"     ),",
 						"     deletable:false,",
@@ -3546,7 +3551,20 @@
 						"     allowCopyCommand: true,",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> dp203SynapsedbLogSink"
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          Correlationid,",
+						"          Operationname,",
+						"          Status,",
+						"          Eventcategory,",
+						"          Level,",
+						"          Time,",
+						"          Subscription,",
+						"          Eventinitiatedby,",
+						"          Resourcetype,",
+						"          Resourcegroup,",
+						"          Resource",
+						"     )) ~> dp203SynapsedbLogSink"
 					]
 				}
 			},

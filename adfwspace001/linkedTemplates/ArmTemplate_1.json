@@ -518,11 +518,11 @@
 				"type": "AzureSqlDWTable",
 				"schema": [
 					{
-						"name": "Correlation id",
+						"name": "Correlationid",
 						"type": "varchar"
 					},
 					{
-						"name": "Operation name",
+						"name": "Operationname",
 						"type": "varchar"
 					},
 					{
@@ -530,7 +530,7 @@
 						"type": "varchar"
 					},
 					{
-						"name": "Event category",
+						"name": "Eventcategory",
 						"type": "varchar"
 					},
 					{
@@ -548,15 +548,15 @@
 						"type": "varchar"
 					},
 					{
-						"name": "Event initiated by",
+						"name": "Eventinitiatedby",
 						"type": "varchar"
 					},
 					{
-						"name": "Resource type",
+						"name": "Resourcetype",
 						"type": "varchar"
 					},
 					{
-						"name": "Resource group",
+						"name": "Resourcegroup",
 						"type": "varchar"
 					},
 					{
@@ -566,7 +566,7 @@
 				],
 				"typeProperties": {
 					"schema": "dbo",
-					"table": "logdata"
+					"table": "logdata_parquet"
 				}
 			},
 			"dependsOn": []
@@ -2208,6 +2208,9 @@
 					"transformations": [
 						{
 							"name": "filterNullResourcegroup"
+						},
+						{
+							"name": "SplitByResourceGroup"
 						}
 					],
 					"scriptLines": [
@@ -2229,19 +2232,21 @@
 						"     ignoreNoFilesFound: false,",
 						"     format: 'parquet') ~> dp203ParquetLogStream",
 						"dp203ParquetLogStream filter(!isNull(Resourcegroup)) ~> filterNullResourcegroup",
-						"filterNullResourcegroup sink(allowSchemaDrift: true,",
+						"filterNullResourcegroup split(equalsIgnoreCase(Resourcegroup,'app-grp'),",
+						"     disjoint: false) ~> SplitByResourceGroup@(AppgrpStream, NonAppgrpStream)",
+						"SplitByResourceGroup@AppgrpStream sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
-						"          {Correlation id} as string,",
-						"          {Operation name} as string,",
+						"          Correlationid as string,",
+						"          Operationname as string,",
 						"          Status as string,",
-						"          {Event category} as string,",
+						"          Eventcategory as string,",
 						"          Level as string,",
 						"          Time as timestamp,",
 						"          Subscription as string,",
-						"          {Event initiated by} as string,",
-						"          {Resource type} as string,",
-						"          {Resource group} as string,",
+						"          Eventinitiatedby as string,",
+						"          Resourcetype as string,",
+						"          Resourcegroup as string,",
 						"          Resource as string",
 						"     ),",
 						"     deletable:false,",
@@ -2253,7 +2258,20 @@
 						"     allowCopyCommand: true,",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     errorHandlingOption: 'stopOnFirstError') ~> dp203SynapsedbLogSink"
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          Correlationid,",
+						"          Operationname,",
+						"          Status,",
+						"          Eventcategory,",
+						"          Level,",
+						"          Time,",
+						"          Subscription,",
+						"          Eventinitiatedby,",
+						"          Resourcetype,",
+						"          Resourcegroup,",
+						"          Resource",
+						"     )) ~> dp203SynapsedbLogSink"
 					]
 				}
 			},
