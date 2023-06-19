@@ -24,6 +24,9 @@
 			"transformations": [
 				{
 					"name": "filterNullResourcegroup"
+				},
+				{
+					"name": "SplitByResourceGroup"
 				}
 			],
 			"scriptLines": [
@@ -45,7 +48,9 @@
 				"     ignoreNoFilesFound: false,",
 				"     format: 'parquet') ~> dp203ParquetLogStream",
 				"dp203ParquetLogStream filter(!isNull(Resourcegroup)) ~> filterNullResourcegroup",
-				"filterNullResourcegroup sink(allowSchemaDrift: true,",
+				"filterNullResourcegroup split(equalsIgnoreCase(Resourcegroup,'app-grp'),",
+				"     disjoint: false) ~> SplitByResourceGroup@(AppgrpStream, NonAppgrpStream)",
+				"SplitByResourceGroup@AppgrpStream sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          {Correlation id} as string,",
