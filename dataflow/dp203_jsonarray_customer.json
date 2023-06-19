@@ -12,8 +12,20 @@
 					"name": "dp203JsonArrayStream"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dp203_synapsedb_customer",
+						"type": "DatasetReference"
+					},
+					"name": "dp203InsertIntoSynapseDb"
+				}
+			],
+			"transformations": [
+				{
+					"name": "dp203FlattenJsonArray"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          customerid as integer,",
@@ -24,7 +36,40 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
-				"     documentForm: 'arrayOfDocuments') ~> dp203JsonArrayStream"
+				"     documentForm: 'arrayOfDocuments') ~> dp203JsonArrayStream",
+				"dp203JsonArrayStream foldDown(unroll(courses, courses),",
+				"     mapColumn(",
+				"          customerid,",
+				"          customername,",
+				"          registered,",
+				"          courses",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> dp203FlattenJsonArray",
+				"dp203FlattenJsonArray sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          CustomerID as integer,",
+				"          CustomerName as string,",
+				"          Registered as boolean,",
+				"          Courses as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     staged: true,",
+				"     allowCopyCommand: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          CustomerID = customerid,",
+				"          CustomerName = customername,",
+				"          Registered = registered,",
+				"          Courses = courses",
+				"     )) ~> dp203InsertIntoSynapseDb"
 			]
 		}
 	}
