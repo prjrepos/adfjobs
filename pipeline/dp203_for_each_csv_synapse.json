@@ -45,6 +45,10 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Metadata Child Items').output.childItems",
+						"type": "Expression"
+					},
 					"activities": [
 						{
 							"name": "Copy child item into synsapse",
@@ -59,13 +63,44 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
 								"sink": {
 									"type": "SqlDWSink",
 									"writeBehavior": "Insert",
 									"sqlWriterUseTableLock": false
 								},
-								"enableStaging": false
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
 							},
+							"inputs": [
+								{
+									"referenceName": "dp203_customers_csv",
+									"type": "DatasetReference",
+									"parameters": {
+										"filename": {
+											"value": "@item().Name",
+											"type": "Expression"
+										}
+									}
+								}
+							],
 							"outputs": [
 								{
 									"referenceName": "dp203_synapsedb_customers",
