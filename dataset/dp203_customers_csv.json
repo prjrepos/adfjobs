@@ -1,0 +1,21 @@
+{
+	"name": "dp203_customers_csv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "adls2_coredatapoc_linked_service",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
