@@ -45,10 +45,6 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"items": {
-						"value": "@activity('Get Metadata Child Items').output.childItems",
-						"type": "Expression"
-					},
 					"activities": [
 						{
 							"name": "Copy child item into synsapse",
