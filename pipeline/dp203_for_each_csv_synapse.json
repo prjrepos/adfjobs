@@ -1,6 +1,73 @@
 {
 	"name": "dp203_for_each_csv_synapse",
 	"properties": {
+		"activities": [
+			{
+				"name": "Get Metadata Child Items",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"fieldList": []
+				}
+			},
+			{
+				"name": "ForEachChildItems",
+				"description": "the loop for each files under \"customers\" folder",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get Metadata Child Items",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Metadata Child Items').output.childItems",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy child item into synsapse",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"sink": {
+									"type": "SqlDWSink",
+									"writeBehavior": "Insert",
+									"sqlWriterUseTableLock": false
+								},
+								"enableStaging": false
+							},
+							"outputs": [
+								{
+									"referenceName": "dp203_synapsedb_customers",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			}
+		],
 		"annotations": []
 	}
 }
