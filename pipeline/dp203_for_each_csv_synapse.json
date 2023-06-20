@@ -91,7 +91,7 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "dp203_customers_csv",
+									"referenceName": "dp203_customer_parameterized_csv",
 									"type": "DatasetReference",
 									"parameters": {
 										"filename": {
