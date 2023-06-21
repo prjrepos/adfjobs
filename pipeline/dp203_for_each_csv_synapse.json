@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Get Metadata Child Items",
+				"name": "GetMetadataChildItems",
 				"type": "GetMetadata",
 				"dependsOn": [],
 				"policy": {
@@ -24,6 +24,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -37,7 +38,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Get Metadata Child Items",
+						"activity": "GetMetadataChildItems",
 						"dependencyConditions": [
 							"Succeeded"
 						]
