@@ -104,7 +104,7 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "dp203_synapsedb_customers",
+									"referenceName": "dp203_synapsedb_customer",
 									"type": "DatasetReference"
 								}
 							]

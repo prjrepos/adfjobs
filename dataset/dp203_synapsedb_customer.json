@@ -14,29 +14,17 @@
 				"precision": 10
 			},
 			{
-				"name": "CustomerName",
+				"name": "CompanyName",
 				"type": "varchar"
 			},
 			{
-				"name": "Registered",
-				"type": "bit"
-			},
-			{
-				"name": "Courses",
-				"type": "varchar"
-			},
-			{
-				"name": "Mobile",
-				"type": "varchar"
-			},
-			{
-				"name": "City",
+				"name": "SalesPerson",
 				"type": "varchar"
 			}
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "Customercourse"
+			"table": "DimCustomer"
 		}
 	}
 }
